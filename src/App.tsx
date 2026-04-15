@@ -128,21 +128,21 @@ const projectsData: Project[] = [
     title: "בדק בית וחוות דעת הנדסית",
     category: "בדק בית וחוות דעת הנדסית",
     description: "בדיקה מקיפה של ליקויי בנייה, הפקת דוח הנדסי מפורט וקביל בבית משפט.",
-    driveLink: "https://raw.githubusercontent.com/ryanfahr99-ux/site-assets-/main/assets/PDF.pdf"
+    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
   },
   {
     id: "p2",
     title: "שמאות נזקי רכוש",
     category: "שמאות נזקי רכוש",
     description: "הערכת נזק מקצועית, ליווי מול חברות ביטוח ומיצוי זכויות מלא.",
-    driveLink: "https://raw.githubusercontent.com/ryanfahr99-ux/site-assets-/main/assets/PDF.pdf"
+    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
   },
   {
     id: "p3",
     title: "בקרת איכות ופיקוח",
     category: "פיקוח ובקרת איכות",
     description: "ליווי מקצועי ובקרת איכות לאורך כל שלבי הפרויקט, למניעת טעויות וחיסכון בעלויות.",
-    driveLink: "https://raw.githubusercontent.com/ryanfahr99-ux/site-assets-/main/assets/PDF.pdf"
+    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
   }
 ];
 
@@ -301,7 +301,7 @@ export default function App() {
         <div className="container mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img 
-            src="https://lh3.googleusercontent.com/u/0/d/1VzP5uKM2xi2LmxDqE-AIvzI68uhL-LXv" 
+            src="https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%9C%D7%95%D7%92%D7%95%20%D7%9E%D7%A2%D7%95%D7%93%D7%9B%D7%9F.png" 
             alt="לוגו OVER הנדסה" 
             className={`h-16 md:h-24 w-auto transition-all ${(scrolled && !isMenuOpen) ? '' : 'brightness-0 invert drop-shadow-md'}`}
             referrerPolicy="no-referrer"
@@ -495,7 +495,7 @@ export default function App() {
               >
                 <div className="relative z-10">
                   <img 
-                    src="https://raw.githubusercontent.com/ryanfahr99-ux/site-assets-/main/assets/%D7%AA%D7%9E%D7%95%D7%A0%D7%94%20%D7%9C%D7%90%D7%95%D7%93%D7%95%D7%AA.png" 
+                    src="https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%AA%D7%9E%D7%95%D7%A0%D7%94%20%D7%9C%D7%90%D7%95%D7%93%D7%95%D7%AA.png" 
                     alt="מהנדס אזרחי מקצועי בשטח" 
                     className="w-full h-auto object-cover shadow-2xl rounded-lg"
                     referrerPolicy="no-referrer"
@@ -1035,7 +1035,7 @@ export default function App() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
             <img 
-              src="https://lh3.googleusercontent.com/u/0/d/1VzP5uKM2xi2LmxDqE-AIvzI68uhL-LXv" 
+              src="https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%9C%D7%95%D7%92%D7%95%20%D7%9E%D7%A2%D7%95%D7%93%D7%9B%D7%9F.png" 
               alt="לוגו OVER הנדסה" 
               className="h-20 w-auto"
               referrerPolicy="no-referrer"
