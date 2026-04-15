@@ -214,19 +214,34 @@ export default function App() {
     
     if (!form.current) return;
 
+    const formData = new FormData(form.current);
+    const templateParams = {
+      name: formData.get('name'),
+      phone: formData.get('phone'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+      to_email: 'samehover@gmail.com', // Common custom key
+      email: 'samehover@gmail.com',    // Common default key
+      reply_to: 'samehover@gmail.com', // Common default key
+    };
+
     try {
-      await emailjs.sendForm(
-        'service_75wbi4q', 
-        'template_a9j5d4k', 
-        form.current, 
-        '--tLZtunGJ8IJphXt'
+      const result = await emailjs.send(
+        'service_klf6072', 
+        'template_wi139un', 
+        templateParams, 
+        'aE45Thgs4J5CqCjeM'
       );
-      console.log("Email sent successfully!");
+      console.log("Email sent successfully!", result.text);
       setShowContactSuccess(true);
       form.current.reset();
     } catch (error) {
       console.error("Error sending email:", error);
-      alert('שגיאה בשליחת ההודעה. אנא נסה שוב מאוחר יותר.');
+      // Log more details if available
+      if (error && typeof error === 'object' && 'text' in error) {
+        console.error("EmailJS Error details:", error.text);
+      }
+      alert('שגיאה בשליחת ההודעה. אנא וודא שהגדרות ה-EmailJS תקינות במערכת.');
     }
   };
 
