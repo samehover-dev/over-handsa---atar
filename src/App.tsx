@@ -95,7 +95,7 @@ const servicesData: Service[] = [
 const projectsData: Project[] = [
   {
     id: "p4",
-    title: "ביצוע פרויקטים",
+    title: "ביצוע ובניה",
     category: "ביצוע פרויקטים עד המפתח",
     description: "ניהול וביצוע מלא של פרויקטי בנייה ושיפוץ, מהתכנון ועד למסירת נכס מוכן למגורים.",
     driveLink: "YOUR_DRIVE_LINK_HERE",
@@ -127,21 +127,36 @@ const projectsData: Project[] = [
     id: "p1",
     title: "בדק בית וחוות דעת הנדסית",
     category: "בדק בית וחוות דעת הנדסית",
-    description: "בדיקה מקיפה של ליקויי בנייה, הפקת דוח הנדסי מפורט וקביל בבית משפט.",
-    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
+    description: "בדיקה מקיפה של ליקויי בנייה. להלן דוגמאות לליקויים שהמומחים שלנו איתרו במהלך בדיקות בשטח:",
+    stages: [
+      {
+        title: "ליקויי שלד וקונסטרוקציה",
+        images: [
+          "https://images.unsplash.com/photo-1590053132232-6f60a90481fd?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
+        ]
+      },
+      {
+        title: "ליקויי רטיבות ואיטום",
+        images: [
+          "https://images.unsplash.com/photo-1585914924626-45adac9e6b42?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=800"
+        ]
+      },
+      {
+        title: "ליקויי גמר וריצוף",
+        images: [
+          "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1503387762-592dec5832f2?auto=format&fit=crop&q=80&w=800"
+        ]
+      }
+    ]
   },
   {
     id: "p2",
     title: "שמאות נזקי רכוש",
     category: "שמאות נזקי רכוש",
     description: "הערכת נזק מקצועית, ליווי מול חברות ביטוח ומיצוי זכויות מלא.",
-    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
-  },
-  {
-    id: "p3",
-    title: "בקרת איכות ופיקוח",
-    category: "פיקוח ובקרת איכות",
-    description: "ליווי מקצועי ובקרת איכות לאורך כל שלבי הפרויקט, למניעת טעויות וחיסכון בעלויות.",
     driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
   }
 ];
@@ -633,8 +648,8 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.15, duration: 0.7 }}
-                  className={`bg-white p-4 md:p-12 rounded-none border-r-4 border-slate-950 shadow-xl shadow-slate-100 ${project.id === 'p4' ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
-                  onClick={() => project.id === 'p4' && setSelectedProject(project)}
+                  className={`bg-white p-4 md:p-12 rounded-none border-r-4 border-slate-950 shadow-xl shadow-slate-100 ${project.stages ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
+                  onClick={() => project.stages && setSelectedProject(project)}
                 >
                   <div className="flex flex-col gap-6">
                     <div className="text-right">
@@ -644,6 +659,13 @@ export default function App() {
                     
                     {project.stages && (
                       <div className="bg-slate-50 p-3 md:p-10 rounded-xl border border-slate-100">
+                        <div className="flex justify-between items-center mb-6">
+                          <h5 className="text-lg font-bold text-slate-900">גלריית תמונות</h5>
+                          <div className="text-accent font-bold text-sm flex items-center gap-1">
+                            <span>לחץ להגדלה</span>
+                            <ChevronLeft size={14} />
+                          </div>
+                        </div>
                         <div className="space-y-6">
                           <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-4 md:mx-0 md:px-0 scrollbar-hide">
                             {project.stages.map((stage, i) => (
