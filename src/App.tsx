@@ -954,14 +954,13 @@ export default function App() {
               <div className="w-full h-full flex items-center justify-center overflow-hidden">
                 <div 
                   id="fullscreen-scroll-container"
-                  className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                  className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide touch-pan-y"
                   onScroll={(e) => {
                     const container = e.currentTarget;
                     const width = container.clientWidth;
                     if (width === 0) return;
                     
-                    // Calculation for RTL scroll
-                    // scrollLeft is usually 0 when at the rightmost in RTL, and goes negative as we scroll left
+                    // Improved calculation for RTL/LTR cross-browser scroll behavior
                     const scrollLeft = Math.abs(container.scrollLeft);
                     const newIndex = Math.round(scrollLeft / width);
                     
@@ -989,6 +988,7 @@ export default function App() {
                         minScale={1}
                         maxScale={4}
                         doubleTap={{ step: 1.5 }}
+                        disabled={false}
                       >
                         <TransformComponent
                           wrapperStyle={{ width: '100%', height: '100%' }}
@@ -1000,14 +1000,14 @@ export default function App() {
                               controls 
                               autoPlay={i === fullscreenImage.index}
                               loop 
-                              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" 
+                              className="max-w-[95vw] max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl" 
                               onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             <img 
                               src={imgUrl} 
-                              alt={`Full screen viewer ${i + 1}`} 
-                              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl pointer-events-none select-none" 
+                              alt={`תמונה ${i + 1}`} 
+                              className="max-w-[95vw] max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl pointer-events-auto select-none" 
                               referrerPolicy="no-referrer" 
                             />
                           )}
@@ -1030,10 +1030,10 @@ export default function App() {
                       });
                     }
                   }}
-                  className="absolute right-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="absolute right-4 text-white hover:text-slate-300 z-[320] flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-black/40 md:bg-white/10 rounded-full backdrop-blur-md transition-all hover:bg-white/20"
                   aria-label="תמונה קודמת"
                 >
-                  <ChevronLeft size={32} className="rotate-180" />
+                  <ChevronLeft size={28} className="rotate-180" />
                 </button>
               )}
 
@@ -1049,10 +1049,10 @@ export default function App() {
                       });
                     }
                   }}
-                  className="absolute left-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="absolute left-4 text-white hover:text-slate-300 z-[320] flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-black/40 md:bg-white/10 rounded-full backdrop-blur-md transition-all hover:bg-white/20"
                   aria-label="תמונה הבאה"
                 >
-                  <ChevronLeft size={32} />
+                  <ChevronLeft size={28} />
                 </button>
               )}
 
