@@ -182,6 +182,21 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (fullscreenImage) {
+      const timer = setTimeout(() => {
+        const container = document.getElementById('fullscreen-scroll-container');
+        if (container) {
+          container.scrollTo({ 
+            left: -fullscreenImage.index * container.clientWidth, 
+            behavior: 'auto' 
+          });
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [fullscreenImage?.allImages.length, !!fullscreenImage]);
+
+  useEffect(() => {
     // Check for scrollability
     const checkScrollable = () => {
       const newScrollable: Record<string, boolean> = {};
@@ -937,102 +952,102 @@ export default function App() {
               )}
               
               <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                <TransformWrapper
-                  initialScale={1}
-                  onZoom={(ref) => setIsZoomed(ref.state.scale > 1)}
-                  onZoomStop={(ref) => setIsZoomed(ref.state.scale > 1)}
-                  onPinching={(ref) => setIsZoomed(ref.state.scale > 1)}
-                  centerOnInit
-                  minScale={1}
-                  maxScale={4}
-                  doubleTap={{ step: 1.5 }}
+                <div 
+                  id="fullscreen-scroll-container"
+                  className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                  onScroll={(e) => {
+                    const container = e.currentTarget;
+                    const width = container.clientWidth;
+                    if (width === 0) return;
+                    
+                    // Calculation for RTL scroll
+                    // scrollLeft is usually 0 when at the rightmost in RTL, and goes negative as we scroll left
+                    const scrollLeft = Math.abs(container.scrollLeft);
+                    const newIndex = Math.round(scrollLeft / width);
+                    
+                    if (newIndex !== fullscreenImage.index && newIndex < fullscreenImage.allImages.length) {
+                      setFullscreenImage({
+                        ...fullscreenImage,
+                        url: fullscreenImage.allImages[newIndex],
+                        index: newIndex
+                      });
+                      setIsZoomed(false);
+                    }
+                  }}
                 >
-                  {({ setTransform }) => (
-                    <TransformComponent
-                      wrapperStyle={{ width: '100%', height: '100%' }}
-                      contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  {fullscreenImage.allImages.map((imgUrl, i) => (
+                    <div 
+                      key={i} 
+                      className="flex-shrink-0 w-full h-full snap-center flex items-center justify-center p-2 md:p-12"
                     >
-                      <AnimatePresence initial={false} custom={direction}>
-                        <motion.div
-                          key={fullscreenImage.index}
-                          custom={direction}
-                          variants={slideVariants}
-                          initial="enter"
-                          animate="center"
-                          exit="exit"
-                          transition={{
-                            x: { type: "spring", stiffness: 300, damping: 30 },
-                            opacity: { duration: 0.2 }
-                          }}
-                          drag={isZoomed ? false : "x"}
-                          dragConstraints={{ left: 0, right: 0 }}
-                          dragElastic={1}
-                          onDragEnd={(_, info) => {
-                            if (isZoomed) return;
-                            const swipeThreshold = 50;
-                            // Swipe Right offset (info.offset.x > 0) -> Pulling from left to right (Next in RTL)
-                            if (info.offset.x > swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
-                              const newIndex = fullscreenImage.index + 1;
-                              setFullscreenImage({
-                                ...fullscreenImage,
-                                url: fullscreenImage.allImages[newIndex],
-                                index: newIndex
-                              });
-                              setPage([newIndex, 1]);
-                              setTransform(0, 0, 1);
-                              setIsZoomed(false);
-                            } 
-                            // Swipe Left offset (info.offset.x < 0) -> Pulling from right to left (Prev in RTL)
-                            else if (info.offset.x < -swipeThreshold && fullscreenImage.index > 0) {
-                              const newIndex = fullscreenImage.index - 1;
-                              setFullscreenImage({
-                                ...fullscreenImage,
-                                url: fullscreenImage.allImages[newIndex],
-                                index: newIndex
-                              });
-                              setPage([newIndex, -1]);
-                              setTransform(0, 0, 1);
-                              setIsZoomed(false);
-                            }
-                          }}
-                          className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing px-2 md:px-12 absolute"
+                      <TransformWrapper
+                        initialScale={1}
+                        onZoom={(ref) => setIsZoomed(ref.state.scale > 1)}
+                        onZoomStop={(ref) => setIsZoomed(ref.state.scale > 1)}
+                        onPinching={(ref) => setIsZoomed(ref.state.scale > 1)}
+                        centerOnInit
+                        minScale={1}
+                        maxScale={4}
+                        doubleTap={{ step: 1.5 }}
+                      >
+                        <TransformComponent
+                          wrapperStyle={{ width: '100%', height: '100%' }}
+                          contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          {isMediaVideo(fullscreenImage.url) ? (
+                          {isMediaVideo(imgUrl) ? (
                             <video 
-                              src={fullscreenImage.url} 
+                              src={imgUrl} 
                               controls 
-                              autoPlay 
+                              autoPlay={i === fullscreenImage.index}
                               loop 
                               className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" 
                               onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             <img 
-                              src={fullscreenImage.url} 
-                              alt="Full screen viewer" 
+                              src={imgUrl} 
+                              alt={`Full screen viewer ${i + 1}`} 
                               className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl pointer-events-none select-none" 
                               referrerPolicy="no-referrer" 
                             />
                           )}
-                        </motion.div>
-                      </AnimatePresence>
-                    </TransformComponent>
-                  )}
-                </TransformWrapper>
+                        </TransformComponent>
+                      </TransformWrapper>
+                    </div>
+                  ))}
+                </div>
               </div>
               
+              {fullscreenImage.index > 0 && !isZoomed && (
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation();
+                    const container = document.getElementById('fullscreen-scroll-container');
+                    if (container) {
+                      container.scrollTo({ 
+                        left: - (fullscreenImage.index - 1) * container.clientWidth, 
+                        behavior: 'smooth' 
+                      });
+                    }
+                  }}
+                  className="absolute right-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
+                  aria-label="תמונה קודמת"
+                >
+                  <ChevronLeft size={32} className="rotate-180" />
+                </button>
+              )}
+
               {fullscreenImage.index < fullscreenImage.allImages.length - 1 && !isZoomed && (
                 <button 
                   onClick={(e) => { 
                     e.stopPropagation();
-                    const newIndex = fullscreenImage.index + 1;
-                    setFullscreenImage({
-                      ...fullscreenImage,
-                      url: fullscreenImage.allImages[newIndex],
-                      index: newIndex
-                    });
-                    setPage([newIndex, 1]);
-                    setIsZoomed(false);
+                    const container = document.getElementById('fullscreen-scroll-container');
+                    if (container) {
+                      container.scrollTo({ 
+                        left: - (fullscreenImage.index + 1) * container.clientWidth, 
+                        behavior: 'smooth' 
+                      });
+                    }
                   }}
                   className="absolute left-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה הבאה"
