@@ -718,34 +718,50 @@ export default function App() {
                               el.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
                             }}
                           >
-                            {project.stages.flatMap((stage, stageIdx) => 
-                              stage.images.map((img, imgIdx) => (
+                            {project.stages.flatMap((stage, stageIdx) => {
+                              const allProjectImages = project.stages!.flatMap(s => s.images);
+                              const stageImagesOffset = project.stages!.slice(0, stageIdx).reduce((acc, s) => acc + s.images.length, 0);
+                              
+                              return stage.images.map((img, imgIdx) => (
                                 <div 
                                   key={`${stageIdx}-${imgIdx}`} 
                                   data-category={stageIdx}
-                                  className={`gallery-item flex-shrink-0 w-[70%] sm:w-[220px] md:w-[240px] snap-center flex flex-col items-center gap-2`}
+                                  className={`gallery-item flex-shrink-0 w-[70%] sm:w-[220px] md:w-[240px] snap-center flex flex-col items-center gap-2 cursor-pointer group/item`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFullscreenImage({
+                                      url: img, 
+                                      index: stageImagesOffset + imgIdx, 
+                                      allImages: allProjectImages
+                                    });
+                                  }}
                                 >
-                                  {isMediaVideo(img) ? (
-                                    <video 
-                                      src={img} 
-                                      className="rounded-lg w-full aspect-square object-cover bg-slate-50 shadow-sm" 
-                                      muted 
-                                      playsInline 
-                                      autoPlay 
-                                      loop
-                                    />
-                                  ) : (
-                                    <img 
-                                      src={img} 
-                                      alt={`${stage.title} ${imgIdx+1}`} 
-                                      className={`rounded-lg w-full ${project.id === 'p1' ? 'aspect-[3/4] object-contain' : 'aspect-square object-cover'} bg-slate-50 shadow-sm border border-slate-100`}
-                                      referrerPolicy="no-referrer" 
-                                    />
-                                  )}
+                                  <div className="relative w-full aspect-square overflow-hidden rounded-lg shadow-sm border border-slate-100 bg-slate-50">
+                                    {isMediaVideo(img) ? (
+                                      <video 
+                                        src={img} 
+                                        className="w-full h-full object-cover" 
+                                        muted 
+                                        playsInline 
+                                        autoPlay 
+                                        loop
+                                      />
+                                    ) : (
+                                      <img 
+                                        src={img} 
+                                        alt={`${stage.title} ${imgIdx+1}`} 
+                                        className={`w-full h-full ${project.id === 'p1' ? 'object-contain' : 'object-cover'} transition-transform duration-500 group-hover/item:scale-110`}
+                                        referrerPolicy="no-referrer" 
+                                      />
+                                    )}
+                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                                      <span className="text-white text-xs font-bold bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">הגדל</span>
+                                    </div>
+                                  </div>
                                   <p className="text-sm font-medium text-slate-700">{stage.title}</p>
                                 </div>
-                              ))
-                            )}
+                              ));
+                            })}
                           </div>
                         </div>
                       </div>
