@@ -120,22 +120,19 @@ const projectsData: Project[] = [
       {
         title: "ליקוי במפלס הריצוף",
         images: [
-          "https://images.unsplash.com/photo-1590053132232-6f60a90481fd?auto=format&fit=crop&q=80&w=800",
-          "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
+          "https://images.unsplash.com/photo-1590053132232-6f60a90481fd?auto=format&fit=crop&q=80&w=800"
         ]
       },
       {
         title: "ליקוי בניקוז מרפסת",
         images: [
-          "https://images.unsplash.com/photo-1585914924626-45adac9e6b42?auto=format&fit=crop&q=80&w=800",
-          "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=800"
+          "https://images.unsplash.com/photo-1585914924626-45adac9e6b42?auto=format&fit=crop&q=80&w=800"
         ]
       },
       {
-        title: "  ליקוי בחלונות אלומניום ",
+        title: "ליקוי בחלונות אלומניום",
         images: [
-          "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&q=80&w=800",
-          "https://images.unsplash.com/photo-1503387762-592dec5832f2?auto=format&fit=crop&q=80&w=800"
+          "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&q=80&w=800"
         ]
       }
     ]
