@@ -98,15 +98,15 @@ const projectsData: Project[] = [
         images: [
           "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/WhatsApp%20Video%202026-05-04%20at%2020.23.19.mp4",
           "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/WhatsApp%20Image%202026-05-04%20at%2020.22.36.jpeg",
-          "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800"
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%92%D7%A7%D7%95%D7%96%D7%99.jpeg"
         ]
       },
       {
-        title: "בניית שלד ",
+        title: " בית פרטי בניית",
         images: [
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTvK0am61CjgAWbmOfmChq50BAu3nB_DZOw&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3LXWBmxwezuJftwxzNAd_fhYKYzWTT97Ew&s",
-          "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800"
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%A8%D7%A6%D7%A4%D7%AA%20%D7%A9%D7%9C%D7%93%20.jpeg",
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%AA%D7%A7%D7%A8%D7%AA%20%D7%A9%D7%9C%D7%93%20.jpeg",
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%91%D7%99%D7%AA%20%D7%A4%D7%A8%D7%98%D7%99.jpeg"
         ]
       }
     ]
