@@ -22,6 +22,7 @@ import {
   Scale
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const WHATSAPP_NUMBER = "972543324494"; // User number
 const PHONE_NUMBER = "054-3324494"; // User number
@@ -151,6 +152,7 @@ export default function App() {
   const [fullscreenImage, setFullscreenImage] = useState<{url: string, index: number, allImages: string[]} | null>(null);
   const [activeStages, setActiveStages] = useState<Record<string, number>>({});
   const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
+  const [isZoomed, setIsZoomed] = useState(false);
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonialName, setTestimonialName] = useState("");
   const [testimonialText, setTestimonialText] = useState("");
@@ -878,21 +880,32 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-4 touch-none" 
+              className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-0 touch-none" 
               role="dialog" 
               aria-modal="true"
             >
               <button 
-                onClick={() => setFullscreenImage(null)}
-                className="absolute top-6 right-6 text-white hover:text-slate-300 z-[310] p-2 bg-black/20 rounded-full backdrop-blur-md"
+                onClick={() => {
+                  setFullscreenImage(null);
+                  setIsZoomed(false);
+                }}
+                className="absolute top-6 right-6 text-white hover:text-slate-300 z-[320] p-2 bg-black/40 rounded-full backdrop-blur-md"
                 aria-label="סגור"
               >
-                <X size={32} />
+                <X size={28} />
               </button>
               
-              {fullscreenImage.index > 0 && (
+              {fullscreenImage.index > 0 && !isZoomed && (
                 <button 
-                  onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index - 1], index: fullscreenImage.index - 1, allImages: fullscreenImage.allImages})}}
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setFullscreenImage({
+                      url: fullscreenImage.allImages[fullscreenImage.index - 1], 
+                      index: fullscreenImage.index - 1, 
+                      allImages: fullscreenImage.allImages
+                    });
+                    setIsZoomed(false);
+                  }}
                   className="absolute right-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה קודמת"
                 >
@@ -900,54 +913,87 @@ export default function App() {
                 </button>
               )}
               
-              <motion.div
-                key={fullscreenImage.url}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.5}
-                onDragEnd={(_, info) => {
-                  const swipeThreshold = 50;
-                  if (info.offset.x < -swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
-                    setFullscreenImage({
-                      url: fullscreenImage.allImages[fullscreenImage.index + 1],
-                      index: fullscreenImage.index + 1,
-                      allImages: fullscreenImage.allImages
-                    });
-                  } else if (info.offset.x > swipeThreshold && fullscreenImage.index > 0) {
-                    setFullscreenImage({
-                      url: fullscreenImage.allImages[fullscreenImage.index - 1],
-                      index: fullscreenImage.index - 1,
-                      allImages: fullscreenImage.allImages
-                    });
-                  }
-                }}
-                className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing p-2 md:p-12"
-              >
-                {isMediaVideo(fullscreenImage.url) ? (
-                  <video 
-                    src={fullscreenImage.url} 
-                    controls 
-                    autoPlay 
-                    loop 
-                    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" 
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <img 
-                    src={fullscreenImage.url} 
-                    alt="Full screen" 
-                    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl pointer-events-none select-none" 
-                    referrerPolicy="no-referrer" 
-                  />
-                )}
-              </motion.div>
+              <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                <TransformWrapper
+                  initialScale={1}
+                  onZoom={(ref) => setIsZoomed(ref.state.scale > 1)}
+                  onZoomStop={(ref) => setIsZoomed(ref.state.scale > 1)}
+                  onPinching={(ref) => setIsZoomed(ref.state.scale > 1)}
+                  centerOnInit
+                  minScale={1}
+                  maxScale={4}
+                  doubleTap={{ step: 1.5 }}
+                >
+                  {({ setTransform }) => (
+                    <TransformComponent
+                      wrapperStyle={{ width: '100%', height: '100%' }}
+                      contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <motion.div
+                        key={fullscreenImage.url}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        drag={isZoomed ? false : "x"}
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.5}
+                        onDragEnd={(_, info) => {
+                          if (isZoomed) return;
+                          const swipeThreshold = 50;
+                          if (info.offset.x > swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
+                            setFullscreenImage({
+                              url: fullscreenImage.allImages[fullscreenImage.index + 1],
+                              index: fullscreenImage.index + 1,
+                              allImages: fullscreenImage.allImages
+                            });
+                            setTransform(0, 0, 1);
+                            setIsZoomed(false);
+                          } else if (info.offset.x < -swipeThreshold && fullscreenImage.index > 0) {
+                            setFullscreenImage({
+                              url: fullscreenImage.allImages[fullscreenImage.index - 1],
+                              index: fullscreenImage.index - 1,
+                              allImages: fullscreenImage.allImages
+                            });
+                            setTransform(0, 0, 1);
+                            setIsZoomed(false);
+                          }
+                        }}
+                        className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing px-2 md:px-12"
+                      >
+                        {isMediaVideo(fullscreenImage.url) ? (
+                          <video 
+                            src={fullscreenImage.url} 
+                            controls 
+                            autoPlay 
+                            loop 
+                            className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl shadow-black/50" 
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <img 
+                            src={fullscreenImage.url} 
+                            alt="Full screen" 
+                            className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl shadow-black/50 pointer-events-none select-none" 
+                            referrerPolicy="no-referrer" 
+                          />
+                        )}
+                      </motion.div>
+                    </TransformComponent>
+                  )}
+                </TransformWrapper>
+              </div>
               
-              {fullscreenImage.index < fullscreenImage.allImages.length - 1 && (
+              {fullscreenImage.index < fullscreenImage.allImages.length - 1 && !isZoomed && (
                 <button 
-                  onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index + 1], index: fullscreenImage.index + 1, allImages: fullscreenImage.allImages})}}
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setFullscreenImage({
+                      url: fullscreenImage.allImages[fullscreenImage.index + 1], 
+                      index: fullscreenImage.index + 1, 
+                      allImages: fullscreenImage.allImages
+                    });
+                    setIsZoomed(false);
+                  }}
                   className="absolute left-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה הבאה"
                 >
@@ -956,19 +1002,21 @@ export default function App() {
               )}
 
               {/* Progress counter */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-[310]">
-                <div className="text-white/80 font-bold text-sm bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">
-                  {fullscreenImage.index + 1} / {fullscreenImage.allImages.length}
+              {!isZoomed && (
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-[310]">
+                  <div className="text-white/90 font-bold text-sm bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-xl border border-white/20 shadow-lg">
+                    {fullscreenImage.index + 1} / {fullscreenImage.allImages.length}
+                  </div>
+                  <div className="flex gap-1.5">
+                    {fullscreenImage.allImages.map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`h-1.5 rounded-full transition-all duration-300 shadow-sm ${i === fullscreenImage.index ? 'w-10 bg-primary' : 'w-2.5 bg-white/30'}`}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-1.5">
-                  {fullscreenImage.allImages.map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`h-1 rounded-full transition-all duration-300 ${i === fullscreenImage.index ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}
-                    />
-                  ))}
-                </div>
-              </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
