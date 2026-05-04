@@ -882,19 +882,19 @@ export default function App() {
             <div className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-4" role="dialog" aria-modal="true">
               <button 
                 onClick={() => setFullscreenImage(null)}
-                className="absolute top-6 right-6 text-white hover:text-slate-300 z-10"
+                className="absolute top-4 right-4 md:top-8 md:right-8 text-white z-[310] bg-black/40 hover:bg-black/60 p-2 rounded-full backdrop-blur-sm transition-all hover:scale-110 border border-white/20"
                 aria-label="סגור"
               >
-                <X size={40} />
+                <X size={window.innerWidth < 768 ? 24 : 40} />
               </button>
               
               {fullscreenImage.index > 0 && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index - 1], index: fullscreenImage.index - 1, allImages: fullscreenImage.allImages})}}
-                  className="absolute right-6 text-white hover:text-slate-300 z-10"
+                  className="absolute right-4 md:right-8 text-white z-10 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full backdrop-blur-sm transition-all hover:scale-110 active:scale-95 border border-white/20"
                   aria-label="תמונה קודמת"
                 >
-                  <ChevronLeft size={40} className="rotate-180" />
+                  <ChevronLeft size={window.innerWidth < 768 ? 24 : 40} className="rotate-180" />
                 </button>
               )}
               
@@ -915,10 +915,10 @@ export default function App() {
               {fullscreenImage.index < fullscreenImage.allImages.length - 1 && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index + 1], index: fullscreenImage.index + 1, allImages: fullscreenImage.allImages})}}
-                  className="absolute left-6 text-white hover:text-slate-300 z-10"
+                  className="absolute left-4 md:left-8 text-white z-10 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full backdrop-blur-sm transition-all hover:scale-110 active:scale-95 border border-white/20"
                   aria-label="תמונה הבאה"
                 >
-                  <ChevronLeft size={40} />
+                  <ChevronLeft size={window.innerWidth < 768 ? 24 : 40} />
                 </button>
               )}
             </div>
