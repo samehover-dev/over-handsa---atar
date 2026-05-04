@@ -94,10 +94,10 @@ const projectsData: Project[] = [
     driveLink: "YOUR_DRIVE_LINK_HERE",
     stages: [
       {
-        title: "בניית וילה",
+        title: " שיפוץ וילה יוקרתית",
         images: [
-          "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080",
-          "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080",
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/WhatsApp%20Video%202026-05-04%20at%2020.23.19.mp4",
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/WhatsApp%20Image%202026-05-04%20at%2020.22.36.jpeg",
           "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800"
         ]
       },
@@ -120,24 +120,28 @@ const projectsData: Project[] = [
       {
         title: "ליקוי במפלס הריצוף",
         images: [
-          "https://images.unsplash.com/photo-1590053132232-6f60a90481fd?auto=format&fit=crop&q=80&w=800"
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%94%D7%A4%D7%A8%D7%A9%D7%99%20%D7%92%D7%95%D7%91%D7%94.jpg"
         ]
       },
       {
         title: "ליקוי בניקוז מרפסת",
         images: [
-          "https://images.unsplash.com/photo-1585914924626-45adac9e6b42?auto=format&fit=crop&q=80&w=800"
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%A0%D7%A7%D7%96%20%D7%9B%D7%A4%D7%95%D7%9C.jpeg"
         ]
       },
       {
-        title: "ליקוי בחלונות אלומניום",
+        title: "ליקוי בחלונות אלומיניום",
         images: [
-          "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&q=80&w=800"
+          "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%A4%D7%92%D7%9D%20%D7%91%D7%90%D7%9C%D7%95%D7%9E%D7%A0%D7%99%D7%95%D7%9D.png"
         ]
       }
     ]
   }
 ];
+
+const isMediaVideo = (url: string) => {
+  return url.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/) || url.includes('Video') || url.includes('.mp4');
+};
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -146,6 +150,7 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<{url: string, index: number, allImages: string[]} | null>(null);
   const [activeStages, setActiveStages] = useState<Record<string, number>>({});
+  const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonialName, setTestimonialName] = useState("");
   const [testimonialText, setTestimonialText] = useState("");
@@ -154,19 +159,31 @@ export default function App() {
   const form = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
+    // Check for scrollability
+    const checkScrollable = () => {
+      const newScrollable: Record<string, boolean> = {};
+      projectsData.forEach(p => {
+        const el = document.getElementById(`gallery-${p.id}`);
+        if (el) {
+          // If scrollWidth is significantly larger than clientWidth, it's scrollable
+          newScrollable[p.id] = el.scrollWidth > el.clientWidth + 10;
+        }
+      });
+      setScrollableProjects(newScrollable);
+    };
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', checkScrollable);
     
     // Initialize activeStages
     const initialStages: Record<string, number> = {};
-    projectsData.forEach(project => {
-      initialStages[project.id] = 0;
-    });
     setActiveStages(initialStages);
 
-    // Initial scroll for all project image containers
+    // Initial check and scroll for all project image containers
+    setTimeout(checkScrollable, 100);
     projectsData.forEach(project => {
       if (project.stages) {
         const container = document.getElementById(`images-container-${project.id}`);
@@ -176,7 +193,10 @@ export default function App() {
       }
     });
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkScrollable);
+    };
   }, []);
 
   useEffect(() => {
@@ -641,34 +661,36 @@ export default function App() {
                           </div>
                         </div>
                         <div className="space-y-6">
-                          <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-4 md:mx-0 md:px-0 scrollbar-hide">
-                            {project.stages.map((stage, i) => (
-                              <button
-                                key={i}
-                                id={`btn-${project.id}-${i}`}
-                                data-target-category={i}
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  const container = document.getElementById(`gallery-${project.id}`);
-                                  const firstItem = container?.querySelector(`[data-category="${i}"]`);
-                                  if (firstItem) {
-                                    firstItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                                  }
-                                  setActiveStages(prev => ({...prev, [project.id]: i}));
-                                }}
-                                className={`px-4 py-2 rounded-full font-bold text-xs md:text-sm whitespace-nowrap transition-all border-2 ${
-                                  (activeStages[project.id] || 0) === i 
-                                    ? 'bg-slate-950 text-white border-slate-950' 
-                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
-                                }`}
-                              >
-                                {stage.title}
-                              </button>
-                            ))}
-                          </div>
+                          {scrollableProjects[project.id] && (
+                            <div className="flex gap-2 overflow-x-auto pb-2 px-1 md:justify-center scrollbar-hide">
+                              {project.stages.map((stage, i) => (
+                                <button
+                                  key={i}
+                                  id={`btn-${project.id}-${i}`}
+                                  data-target-category={i}
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    const container = document.getElementById(`gallery-${project.id}`);
+                                    const firstItem = container?.querySelector(`[data-category="${i}"]`);
+                                    if (firstItem) {
+                                      firstItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                                    }
+                                    setActiveStages(prev => ({...prev, [project.id]: i}));
+                                  }}
+                                  className={`px-4 py-2 rounded-full font-bold text-xs md:text-sm whitespace-nowrap transition-all border-2 ${
+                                    activeStages[project.id] === i 
+                                      ? 'bg-primary text-white border-primary shadow-sm' 
+                                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                                  }`}
+                                >
+                                  {stage.title}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                           <div 
                             id={`gallery-${project.id}`}
-                            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 scrollbar-hide"
+                            className="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-4 scrollbar-hide"
                             ref={(el) => {
                               if (!el) return;
                               const observer = new IntersectionObserver((entries) => {
@@ -691,7 +713,7 @@ export default function App() {
                                     });
                                   }
                                 });
-                              }, { root: el, rootMargin: '0px -40% 0px -40%', threshold: 0 });
+                              }, { root: el, rootMargin: '0px -45% 0px -45%', threshold: 0 });
                               
                               el.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
                             }}
@@ -701,14 +723,25 @@ export default function App() {
                                 <div 
                                   key={`${stageIdx}-${imgIdx}`} 
                                   data-category={stageIdx}
-                                  className="gallery-item flex-shrink-0 w-64 snap-center flex flex-col items-center gap-2"
+                                  className={`gallery-item flex-shrink-0 w-[70%] sm:w-[220px] md:w-[240px] snap-center flex flex-col items-center gap-2`}
                                 >
-                                  <img 
-                                    src={img} 
-                                    alt={`${stage.title} ${imgIdx+1}`} 
-                                    className="rounded-lg w-full aspect-video object-cover" 
-                                    referrerPolicy="no-referrer" 
-                                  />
+                                  {isMediaVideo(img) ? (
+                                    <video 
+                                      src={img} 
+                                      className="rounded-lg w-full aspect-square object-cover bg-slate-50 shadow-sm" 
+                                      muted 
+                                      playsInline 
+                                      autoPlay 
+                                      loop
+                                    />
+                                  ) : (
+                                    <img 
+                                      src={img} 
+                                      alt={`${stage.title} ${imgIdx+1}`} 
+                                      className={`rounded-lg w-full ${project.id === 'p1' ? 'aspect-[3/4] object-contain' : 'aspect-square object-cover'} bg-slate-50 shadow-sm border border-slate-100`}
+                                      referrerPolicy="no-referrer" 
+                                    />
+                                  )}
                                   <p className="text-sm font-medium text-slate-700">{stage.title}</p>
                                 </div>
                               ))
@@ -777,13 +810,23 @@ export default function App() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {stage.images.map((img, j) => (
                                 <div key={j} className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
-                                  <img 
-                                    src={img} 
-                                    alt={`${stage.title} ${j+1}`} 
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" 
-                                    referrerPolicy="no-referrer"
-                                    onClick={() => setFullscreenImage({url: img, index: stageImagesOffset + j, allImages: allProjectImages})}
-                                  />
+                                  {isMediaVideo(img) ? (
+                                    <video 
+                                      src={img} 
+                                      className="w-full h-full object-cover cursor-pointer" 
+                                      muted 
+                                      playsInline 
+                                      onClick={() => setFullscreenImage({url: img, index: stageImagesOffset + j, allImages: allProjectImages})}
+                                    />
+                                  ) : (
+                                    <img 
+                                      src={img} 
+                                      alt={`${stage.title} ${j+1}`} 
+                                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" 
+                                      referrerPolicy="no-referrer"
+                                      onClick={() => setFullscreenImage({url: img, index: stageImagesOffset + j, allImages: allProjectImages})}
+                                    />
+                                  )}
                                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                     <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-full text-sm backdrop-blur-sm">הגדל</span>
                                   </div>
@@ -798,13 +841,23 @@ export default function App() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {selectedProject.images.map((img, i) => (
                         <div key={i} className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
-                          <img 
-                            src={img} 
-                            alt={`${selectedProject.title} ${i+1}`} 
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" 
-                            referrerPolicy="no-referrer"
-                            onClick={() => setFullscreenImage({url: img, index: i, allImages: selectedProject.images!})}
-                          />
+                          {isMediaVideo(img) ? (
+                            <video 
+                              src={img} 
+                              className="w-full h-full object-cover cursor-pointer" 
+                              muted 
+                              playsInline 
+                              onClick={() => setFullscreenImage({url: img, index: i, allImages: selectedProject.images!})}
+                            />
+                          ) : (
+                            <img 
+                              src={img} 
+                              alt={`${selectedProject.title} ${i+1}`} 
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" 
+                              referrerPolicy="no-referrer"
+                              onClick={() => setFullscreenImage({url: img, index: i, allImages: selectedProject.images!})}
+                            />
+                          )}
                           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-full text-sm backdrop-blur-sm">הגדל</span>
                           </div>
@@ -840,7 +893,17 @@ export default function App() {
                 </button>
               )}
               
-              <img src={fullscreenImage.url} alt="Full screen" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
+              {isMediaVideo(fullscreenImage.url) ? (
+                <video 
+                  src={fullscreenImage.url} 
+                  controls 
+                  autoPlay 
+                  loop 
+                  className="max-w-full max-h-full object-contain" 
+                />
+              ) : (
+                <img src={fullscreenImage.url} alt="Full screen" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
+              )}
               
               {fullscreenImage.index < fullscreenImage.allImages.length - 1 && (
                 <button 
