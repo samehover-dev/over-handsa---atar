@@ -102,7 +102,7 @@ const projectsData: Project[] = [
         ]
       },
       {
-        title: " בית פרטי בניית",
+        title: " בניית בית פרטי",
         images: [
           "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%A8%D7%A6%D7%A4%D7%AA%20%D7%A9%D7%9C%D7%93%20.jpeg",
           "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/%D7%AA%D7%A7%D7%A8%D7%AA%20%D7%A9%D7%9C%D7%93%20.jpeg",
