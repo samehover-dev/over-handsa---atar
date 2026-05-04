@@ -173,29 +173,19 @@ export default function App() {
     };
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', checkScrollable);
     
-    // Initialize activeStages
-    const initialStages: Record<string, number> = {};
-    setActiveStages(initialStages);
-
-    // Initial check and scroll for all project image containers
-    setTimeout(checkScrollable, 100);
-    projectsData.forEach(project => {
-      if (project.stages) {
-        const container = document.getElementById(`images-container-${project.id}`);
-        if (container) {
-          container.scrollTo({ left: 0, behavior: 'auto' });
-        }
-      }
-    });
+    // Initial check
+    const timer = setTimeout(checkScrollable, 500);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', checkScrollable);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -699,21 +689,13 @@ export default function App() {
                                     const category = parseInt(entry.target.getAttribute('data-category') || '0');
                                     setActiveStages(prev => {
                                       if (prev[project.id] !== category) {
-                                        // Find the button container and the active button
-                                        const buttonsContainer = entry.target.closest('.space-y-6')?.querySelector('.overflow-x-auto') as HTMLElement;
-                                        const activeButton = document.getElementById(`btn-${project.id}-${category}`);
-                                        
-                                        if (buttonsContainer && activeButton) {
-                                          const scrollPos = activeButton.offsetLeft - (buttonsContainer.offsetWidth / 2) + (activeButton.offsetWidth / 2);
-                                          buttonsContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
-                                        }
                                         return {...prev, [project.id]: category};
                                       }
                                       return prev;
                                     });
                                   }
                                 });
-                              }, { root: el, rootMargin: '0px -45% 0px -45%', threshold: 0 });
+                              }, { root: el, rootMargin: '0px -45% 0px -45%', threshold: 0.1 });
                               
                               el.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
                             }}
