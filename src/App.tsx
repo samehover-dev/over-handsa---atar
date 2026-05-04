@@ -872,49 +872,104 @@ export default function App() {
         </AnimatePresence>
 
         {/* Fullscreen Image Viewer */}
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {fullscreenImage && (
-            <div className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-4 touch-none" 
+              role="dialog" 
+              aria-modal="true"
+            >
               <button 
                 onClick={() => setFullscreenImage(null)}
-                className="absolute top-6 right-6 text-white hover:text-slate-300 z-10"
+                className="absolute top-6 right-6 text-white hover:text-slate-300 z-[310] p-2 bg-black/20 rounded-full backdrop-blur-md"
                 aria-label="סגור"
               >
-                <X size={40} />
+                <X size={32} />
               </button>
               
               {fullscreenImage.index > 0 && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index - 1], index: fullscreenImage.index - 1, allImages: fullscreenImage.allImages})}}
-                  className="absolute right-6 text-white hover:text-slate-300 z-10"
+                  className="absolute right-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה קודמת"
                 >
-                  <ChevronLeft size={40} className="rotate-180" />
+                  <ChevronLeft size={32} className="rotate-180" />
                 </button>
               )}
               
-              {isMediaVideo(fullscreenImage.url) ? (
-                <video 
-                  src={fullscreenImage.url} 
-                  controls 
-                  autoPlay 
-                  loop 
-                  className="max-w-full max-h-full object-contain" 
-                />
-              ) : (
-                <img src={fullscreenImage.url} alt="Full screen" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
-              )}
+              <motion.div
+                key={fullscreenImage.url}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.5}
+                onDragEnd={(_, info) => {
+                  const swipeThreshold = 50;
+                  if (info.offset.x < -swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
+                    setFullscreenImage({
+                      url: fullscreenImage.allImages[fullscreenImage.index + 1],
+                      index: fullscreenImage.index + 1,
+                      allImages: fullscreenImage.allImages
+                    });
+                  } else if (info.offset.x > swipeThreshold && fullscreenImage.index > 0) {
+                    setFullscreenImage({
+                      url: fullscreenImage.allImages[fullscreenImage.index - 1],
+                      index: fullscreenImage.index - 1,
+                      allImages: fullscreenImage.allImages
+                    });
+                  }
+                }}
+                className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing p-2 md:p-12"
+              >
+                {isMediaVideo(fullscreenImage.url) ? (
+                  <video 
+                    src={fullscreenImage.url} 
+                    controls 
+                    autoPlay 
+                    loop 
+                    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" 
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <img 
+                    src={fullscreenImage.url} 
+                    alt="Full screen" 
+                    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl pointer-events-none select-none" 
+                    referrerPolicy="no-referrer" 
+                  />
+                )}
+              </motion.div>
               
               {fullscreenImage.index < fullscreenImage.allImages.length - 1 && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setFullscreenImage({url: fullscreenImage.allImages[fullscreenImage.index + 1], index: fullscreenImage.index + 1, allImages: fullscreenImage.allImages})}}
-                  className="absolute left-6 text-white hover:text-slate-300 z-10"
+                  className="absolute left-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה הבאה"
                 >
-                  <ChevronLeft size={40} />
+                  <ChevronLeft size={32} />
                 </button>
               )}
-            </div>
+
+              {/* Progress counter */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-[310]">
+                <div className="text-white/80 font-bold text-sm bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+                  {fullscreenImage.index + 1} / {fullscreenImage.allImages.length}
+                </div>
+                <div className="flex gap-1.5">
+                  {fullscreenImage.allImages.map((_, i) => (
+                    <div 
+                      key={i} 
+                      className={`h-1 rounded-full transition-all duration-300 ${i === fullscreenImage.index ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
 
