@@ -153,12 +153,33 @@ export default function App() {
   const [activeStages, setActiveStages] = useState<Record<string, number>>({});
   const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
   const [isZoomed, setIsZoomed] = useState(false);
+  const [[page, direction], setPage] = useState([0, 0]);
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonialName, setTestimonialName] = useState("");
   const [testimonialText, setTestimonialText] = useState("");
   const [testimonialSubmitted, setTestimonialSubmitted] = useState(false);
   const [showContactSuccess, setShowContactSuccess] = useState(false);
   const form = useRef<HTMLFormElement>(null);
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    })
+  };
 
   useEffect(() => {
     // Check for scrollability
@@ -874,13 +895,13 @@ export default function App() {
         </AnimatePresence>
 
         {/* Fullscreen Image Viewer */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {fullscreenImage && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-0 touch-none" 
+              className="fixed inset-0 bg-black z-[300] flex items-center justify-center p-0 touch-none overflow-hidden" 
               role="dialog" 
               aria-modal="true"
             >
@@ -889,7 +910,7 @@ export default function App() {
                   setFullscreenImage(null);
                   setIsZoomed(false);
                 }}
-                className="absolute top-6 right-6 text-white hover:text-slate-300 z-[320] p-2 bg-black/40 rounded-full backdrop-blur-md"
+                className="absolute top-6 right-6 text-white hover:text-slate-300 z-[330] p-2 bg-black/40 rounded-full backdrop-blur-md"
                 aria-label="סגור"
               >
                 <X size={28} />
@@ -898,15 +919,17 @@ export default function App() {
               {fullscreenImage.index > 0 && !isZoomed && (
                 <button 
                   onClick={(e) => { 
-                    e.stopPropagation(); 
+                    e.stopPropagation();
+                    const newIndex = fullscreenImage.index - 1;
                     setFullscreenImage({
-                      url: fullscreenImage.allImages[fullscreenImage.index - 1], 
-                      index: fullscreenImage.index - 1, 
-                      allImages: fullscreenImage.allImages
+                      ...fullscreenImage,
+                      url: fullscreenImage.allImages[newIndex],
+                      index: newIndex
                     });
+                    setPage([newIndex, -1]);
                     setIsZoomed(false);
                   }}
-                  className="absolute right-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="absolute right-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה קודמת"
                 >
                   <ChevronLeft size={32} className="rotate-180" />
@@ -929,55 +952,70 @@ export default function App() {
                       wrapperStyle={{ width: '100%', height: '100%' }}
                       contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      <motion.div
-                        key={fullscreenImage.url}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        drag={isZoomed ? false : "x"}
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0.5}
-                        onDragEnd={(_, info) => {
-                          if (isZoomed) return;
-                          const swipeThreshold = 50;
-                          if (info.offset.x > swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
-                            setFullscreenImage({
-                              url: fullscreenImage.allImages[fullscreenImage.index + 1],
-                              index: fullscreenImage.index + 1,
-                              allImages: fullscreenImage.allImages
-                            });
-                            setTransform(0, 0, 1);
-                            setIsZoomed(false);
-                          } else if (info.offset.x < -swipeThreshold && fullscreenImage.index > 0) {
-                            setFullscreenImage({
-                              url: fullscreenImage.allImages[fullscreenImage.index - 1],
-                              index: fullscreenImage.index - 1,
-                              allImages: fullscreenImage.allImages
-                            });
-                            setTransform(0, 0, 1);
-                            setIsZoomed(false);
-                          }
-                        }}
-                        className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing px-2 md:px-12"
-                      >
-                        {isMediaVideo(fullscreenImage.url) ? (
-                          <video 
-                            src={fullscreenImage.url} 
-                            controls 
-                            autoPlay 
-                            loop 
-                            className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl shadow-black/50" 
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        ) : (
-                          <img 
-                            src={fullscreenImage.url} 
-                            alt="Full screen" 
-                            className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl shadow-black/50 pointer-events-none select-none" 
-                            referrerPolicy="no-referrer" 
-                          />
-                        )}
-                      </motion.div>
+                      <AnimatePresence initial={false} custom={direction}>
+                        <motion.div
+                          key={fullscreenImage.index}
+                          custom={direction}
+                          variants={slideVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
+                          }}
+                          drag={isZoomed ? false : "x"}
+                          dragConstraints={{ left: 0, right: 0 }}
+                          dragElastic={1}
+                          onDragEnd={(_, info) => {
+                            if (isZoomed) return;
+                            const swipeThreshold = 50;
+                            // Swipe Right offset (info.offset.x > 0) -> Pulling from left to right (Next in RTL)
+                            if (info.offset.x > swipeThreshold && fullscreenImage.index < fullscreenImage.allImages.length - 1) {
+                              const newIndex = fullscreenImage.index + 1;
+                              setFullscreenImage({
+                                ...fullscreenImage,
+                                url: fullscreenImage.allImages[newIndex],
+                                index: newIndex
+                              });
+                              setPage([newIndex, 1]);
+                              setTransform(0, 0, 1);
+                              setIsZoomed(false);
+                            } 
+                            // Swipe Left offset (info.offset.x < 0) -> Pulling from right to left (Prev in RTL)
+                            else if (info.offset.x < -swipeThreshold && fullscreenImage.index > 0) {
+                              const newIndex = fullscreenImage.index - 1;
+                              setFullscreenImage({
+                                ...fullscreenImage,
+                                url: fullscreenImage.allImages[newIndex],
+                                index: newIndex
+                              });
+                              setPage([newIndex, -1]);
+                              setTransform(0, 0, 1);
+                              setIsZoomed(false);
+                            }
+                          }}
+                          className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing px-2 md:px-12 absolute"
+                        >
+                          {isMediaVideo(fullscreenImage.url) ? (
+                            <video 
+                              src={fullscreenImage.url} 
+                              controls 
+                              autoPlay 
+                              loop 
+                              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" 
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ) : (
+                            <img 
+                              src={fullscreenImage.url} 
+                              alt="Full screen viewer" 
+                              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl pointer-events-none select-none" 
+                              referrerPolicy="no-referrer" 
+                            />
+                          )}
+                        </motion.div>
+                      </AnimatePresence>
                     </TransformComponent>
                   )}
                 </TransformWrapper>
@@ -986,15 +1024,17 @@ export default function App() {
               {fullscreenImage.index < fullscreenImage.allImages.length - 1 && !isZoomed && (
                 <button 
                   onClick={(e) => { 
-                    e.stopPropagation(); 
+                    e.stopPropagation();
+                    const newIndex = fullscreenImage.index + 1;
                     setFullscreenImage({
-                      url: fullscreenImage.allImages[fullscreenImage.index + 1], 
-                      index: fullscreenImage.index + 1, 
-                      allImages: fullscreenImage.allImages
+                      ...fullscreenImage,
+                      url: fullscreenImage.allImages[newIndex],
+                      index: newIndex
                     });
+                    setPage([newIndex, 1]);
                     setIsZoomed(false);
                   }}
-                  className="absolute left-4 text-white hover:text-slate-300 z-[310] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="absolute left-4 text-white hover:text-slate-300 z-[320] hidden md:flex items-center justify-center w-12 h-12 bg-white/10 rounded-full backdrop-blur-sm transition-all hover:bg-white/20"
                   aria-label="תמונה הבאה"
                 >
                   <ChevronLeft size={32} />
