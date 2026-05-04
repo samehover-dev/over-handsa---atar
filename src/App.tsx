@@ -727,6 +727,7 @@ export default function App() {
                                         playsInline 
                                         autoPlay 
                                         loop
+                                        preload="auto"
                                       />
                                     ) : (
                                       <img 
@@ -814,6 +815,9 @@ export default function App() {
                                       className="w-full h-full object-cover cursor-pointer" 
                                       muted 
                                       playsInline 
+                                      autoPlay
+                                      loop
+                                      preload="auto"
                                       onClick={() => setFullscreenImage({url: img, index: stageImagesOffset + j, allImages: allProjectImages})}
                                     />
                                   ) : (
@@ -845,6 +849,9 @@ export default function App() {
                               className="w-full h-full object-cover cursor-pointer" 
                               muted 
                               playsInline 
+                              autoPlay
+                              loop
+                              preload="auto"
                               onClick={() => setFullscreenImage({url: img, index: i, allImages: selectedProject.images!})}
                             />
                           ) : (
@@ -897,6 +904,8 @@ export default function App() {
                   controls 
                   autoPlay 
                   loop 
+                  muted
+                  playsInline
                   className="max-w-full max-h-full object-contain" 
                 />
               ) : (
