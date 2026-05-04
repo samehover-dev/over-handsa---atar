@@ -189,29 +189,6 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const stageIndex = parseInt(entry.target.getAttribute('data-stage-index') || '0');
-            const projectId = entry.target.getAttribute('data-project-id') || '';
-            setActiveStages(prev => ({...prev, [projectId]: stageIndex}));
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-      }
-    );
-
-    document.querySelectorAll('[data-stage-index]').forEach((el) => {
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [projectsData]);
-
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -266,12 +243,12 @@ export default function App() {
   ];
 
   useEffect(() => {
-    if (isMenuOpen) {
+    if (isMenuOpen || selectedProject || !!fullscreenImage) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
-  }, [isMenuOpen]);
+  }, [isMenuOpen, selectedProject, fullscreenImage]);
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -683,6 +660,14 @@ export default function App() {
                             className="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-4 scrollbar-hide"
                             ref={(el) => {
                               if (!el) return;
+                              
+                              // Use a weakMap or similar to avoid re-creating observers if not needed
+                              // or just disconnect existing one if we had a way to track it.
+                              // For simplicity in this structure, we'll mark the element.
+                              if ((el as any)._observer) {
+                                (el as any)._observer.disconnect();
+                              }
+
                               const observer = new IntersectionObserver((entries) => {
                                 entries.forEach(entry => {
                                   if (entry.isIntersecting) {
@@ -695,8 +680,13 @@ export default function App() {
                                     });
                                   }
                                 });
-                              }, { root: el, rootMargin: '0px -45% 0px -45%', threshold: 0.1 });
+                              }, { 
+                                root: el, 
+                                rootMargin: '0px -10% 0px -10%', // Tighter margin to reduce "jumps"
+                                threshold: 0.5 // Higher threshold for more stability
+                              });
                               
+                              (el as any)._observer = observer;
                               el.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
                             }}
                           >
