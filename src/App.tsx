@@ -1,4 +1,5 @@
-/**
+/**ביצוע פרויקטים, פיקוח בנייה, בדק בית, איתור נזקי מים
+
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -67,14 +68,6 @@ const servicesData: Service[] = [
     mainImage: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&q=80&w=800",
   },
   {
-    id: "legal",
-    title: "שמאות נזקי רכוש",
-    icon: Scale,
-    shortDesc: "הערכת נזק מקצועית, כולל ליווי מול חברות ביטוח למיצוי זכויות מלא.",
-    fullDesc: "שמאות מקצועית היא הבסיס להתנהלות נכונה מול חברות ביטוח ולמיצוי הזכויות. אנו מספקים שירותי שמאות לנזקי רכוש, בדגש על נזקי מים, רטיבות ונזקים מבניים, כולל הערכה מדויקת והפקת חוות דעת מקצועית.",
-    mainImage: "https://shpak-law.com/wp-content/uploads/2020/03/Litigation.jpg",
-  },
-  {
     id: "supervision",
     title: "פיקוח ובקרת איכות",
     icon: HardHat,
@@ -101,14 +94,14 @@ const projectsData: Project[] = [
     driveLink: "YOUR_DRIVE_LINK_HERE",
     stages: [
       {
-        title: "בניית ספא",
+        title: "בניית וילה",
         images: [
           "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080",
           "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080"
         ]
       },
       {
-        title: "בניית שלד לוילה",
+        title: "בניית שלד ",
         images: [
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTvK0am61CjgAWbmOfmChq50BAu3nB_DZOw&s",
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3LXWBmxwezuJftwxzNAd_fhYKYzWTT97Ew&s"
@@ -151,13 +144,6 @@ const projectsData: Project[] = [
         ]
       }
     ]
-  },
-  {
-    id: "p2",
-    title: "שמאות נזקי רכוש",
-    category: "שמאות נזקי רכוש",
-    description: "הערכת נזק מקצועית, ליווי מול חברות ביטוח ומיצוי זכויות מלא.",
-    driveLink: "https://raw.githubusercontent.com/samehover-dev/SITE-ASSETS/main/PDF.pdf"
   }
 ];
 
@@ -453,7 +439,7 @@ export default function App() {
                 </div>
                 
                 <h1 className="text-3xl md:text-7xl font-black text-white leading-relaxed md:leading-[1.1] mb-6 tracking-tight">
-                 ביצוע פרויקטים, פיקוח בנייה, בדק בית, איתור נזקי מים ושמאות רכוש
+                 ביצוע פרויקטים עד המפתח, פיקוח ובקרת איכות, בדק בית, אבחון ואיתור נזקי מים
                 </h1>
                 
                 <div className="flex flex-col md:flex-row gap-6 items-start mb-8">
@@ -463,14 +449,10 @@ export default function App() {
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-6 border-r border-white/10 pr-4">
+                  <div className="grid grid-cols-1 gap-6 border-r border-white/10 pr-4">
                     <div>
                       <div className="text-3xl font-black text-white">30+</div>
                       <div className="text-slate-400 text-xs font-bold uppercase">שנות ניסיון</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-black text-white">100%</div>
-                      <div className="text-slate-400 text-xs font-bold uppercase">דיוק הנדסי</div>
                     </div>
                   </div>
                 </div>
@@ -557,7 +539,7 @@ export default function App() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10">
                     {[
                       "ניסיון מעשי בשטח ולא רק תיאורטי",
-                      "שילוב ייחודי של הנדסה + ביצוע + שמאות",
+                      "שילוב ייחודי של הנדסה + ביצוע ",
                       "אמינות ושקיפות מלאה מול הלקוח",
                       "יחס אישי וליווי עד פתרון מלא"
                     ].map((item, idx) => (
