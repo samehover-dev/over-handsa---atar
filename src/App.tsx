@@ -150,6 +150,23 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<{url: string, index: number, allImages: string[]} | null>(null);
   const [activeStages, setActiveStages] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // Scroll active category buttons into view whenever activeStages changes
+    Object.entries(activeStages).forEach(([projectId, stageIdx]) => {
+      const container = document.querySelector(`#gallery-${projectId}`)?.closest('.space-y-6')?.querySelector('.overflow-x-auto');
+      const button = document.getElementById(`btn-${projectId}-${stageIdx}`);
+      
+      if (container && button) {
+        const btnContainer = container as HTMLElement;
+        const btnElement = button as HTMLElement;
+        
+        // Calculate scroll position to center the button
+        const scrollPos = btnElement.offsetLeft - (btnContainer.offsetWidth / 2) + (btnElement.offsetWidth / 2);
+        btnContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
+      }
+    });
+  }, [activeStages]);
   const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonialName, setTestimonialName] = useState("");
@@ -681,8 +698,8 @@ export default function App() {
                                 });
                               }, { 
                                 root: el, 
-                                rootMargin: '0px -10% 0px -10%', // Tighter margin to reduce "jumps"
-                                threshold: 0.5 // Higher threshold for more stability
+                                rootMargin: '0px -45% 0px -45%', // Observe only the center 10%
+                                threshold: 0 
                               });
                               
                               (el as any)._observer = observer;
