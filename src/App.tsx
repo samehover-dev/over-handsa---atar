@@ -97,21 +97,16 @@ const projectsData: Project[] = [
         title: "בניית וילה",
         images: [
           "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080",
-          "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080"
+          "https://www.sharespa.co.il/cdn/shop/products/8.jpg?v=1771873473&width=1080",
+          "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800"
         ]
       },
       {
         title: "בניית שלד ",
         images: [
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTvK0am61CjgAWbmOfmChq50BAu3nB_DZOw&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3LXWBmxwezuJftwxzNAd_fhYKYzWTT97Ew&s"
-        ]
-      },
-      {
-        title: "שיפוץ בית",
-        images: [
-          "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=800",
-          "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=800"
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3LXWBmxwezuJftwxzNAd_fhYKYzWTT97Ew&s",
+          "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800"
         ]
       }
     ]
@@ -123,21 +118,21 @@ const projectsData: Project[] = [
     description: "בדיקה מקיפה של ליקויי בנייה. להלן דוגמאות לליקויים שהמומחים שלנו איתרו במהלך בדיקות בשטח:",
     stages: [
       {
-        title: "ליקויי שלד וקונסטרוקציה",
+        title: "ליקוי במפלס הריצוף",
         images: [
           "https://images.unsplash.com/photo-1590053132232-6f60a90481fd?auto=format&fit=crop&q=80&w=800",
           "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
         ]
       },
       {
-        title: "ליקויי רטיבות ואיטום",
+        title: "ליקוי בניקוז מרפסת",
         images: [
           "https://images.unsplash.com/photo-1585914924626-45adac9e6b42?auto=format&fit=crop&q=80&w=800",
           "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=800"
         ]
       },
       {
-        title: "ליקויי גמר וריצוף",
+        title: "  ליקוי בחלונות אלומניום ",
         images: [
           "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&q=80&w=800",
           "https://images.unsplash.com/photo-1503387762-592dec5832f2?auto=format&fit=crop&q=80&w=800"
