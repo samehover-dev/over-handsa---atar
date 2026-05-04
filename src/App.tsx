@@ -55,8 +55,8 @@ const servicesData: Service[] = [
     id: "moisture",
     title: "ייעוץ ואבחון נזקי מים ואיטום",
     icon: Droplets,
-    shortDesc: "אבחון מדויק של מקור הנזילה — איטום או אינסטלציה — עם המלצות לתיקון ממוקדות.",
-    fullDesc: "נזקי מים הם מהתקלות המורכבות והיקרות לטיפול  — חשוב לאבחן אותן בצורה מדויקת כבר מהשלב הראשון. אנו מתמחים באיתור מקור נזילות, בעיות איטום וכשלים במערכות אינסטלציה, תוך שימוש בגישה מקצועית ושיטתית שמונעת ניסויים וטעייה מיותר. השירות כולל אבחון בשטח, ניתוח מקור התקלה והמלצות לפתרון יעיל וחסכוני.",
+    shortDesc: "אבחון מדויק של מקור הנזילה - איטום או אינסטלציה - עם המלצות לתיקון ממוקדות.",
+    fullDesc: "נזקי מים הם מהתקלות המורכבות והיקרות לטיפול. חשוב לאבחן אותן בצורה מדויקת כבר מהשלב הראשון. אנו מתמחים באיתור מקור נזילות, בעיות איטום וכשלים במערכות אינסטלציה, תוך שימוש בגישה מקצועית ושיטתית שמונעת ניסויים וטעייה מיותר. השירות כולל אבחון בשטח, ניתוח מקור התקלה והמלצות לפתרון יעיל וחסכוני.",
     mainImage: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800",
   },
   {
@@ -71,8 +71,8 @@ const servicesData: Service[] = [
     id: "supervision",
     title: "פיקוח ובקרת איכות",
     icon: HardHat,
-    shortDesc: "ליווי מקצועי בפרויקטים פרטיים — כדי לוודא שהעבודה מצוינת ברמה גבוהה, בזמן ובאיכות.",
-    fullDesc: "בנייה או שיפוץ ללא פיקוח מקצועי עלולים להוביל לליקויים, עיכובים ובלת'מים. אנו מספקים שירותי פיקוח ובקרת איכות לאורך כל שלבי הפרויקט — משלב התכנון ועד למסירה — תוך שמירה על סטנדרטים גבוהים, הקפדה על ביצוע נכון ומניעת טעויות בשטח.",
+    shortDesc: "ליווי מקצועי בפרויקטים פרטיים, כדי לוודא שהעבודה מצוינת ברמה גבוהה, בזמן ובאיכות.",
+    fullDesc: "בנייה או שיפוץ ללא פיקוח מקצועי עלולים להוביל לליקויים, עיכובים ובלת'מים. אנו מספקים שירותי פיקוח ובקרת איכות לאורך כל שלבי הפרויקט, משלב התכנון ועד למסירה, תוך שמירה על סטנדרטים גבוהים, הקפדה על ביצוע נכון ומניעת טעויות בשטח.",
     mainImage: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800",
   },
   {
@@ -80,7 +80,7 @@ const servicesData: Service[] = [
     title: "ביצוע פרויקטים עד המפתח",
     icon: ClipboardCheck,
     shortDesc: "ניהול וביצוע מלא של פרויקטי בנייה ושיפוץ, מהתכנון ועד למסירת נכס מוכן למגורים.",
-    fullDesc: "ניהול וביצוע פרויקט בנייה או שיפוץ דורש ניסיון, מקצועיות ושליטה מלאה בכל שלבי העבודה. אנו מציעים שירות כולל של ביצוע פרויקטים 'עד המפתח' — משלב התכנון, דרך ניהול הקבלנים והעבודות ועד למסירה מלאה של נכס מוכן למגורים.\n✔ ניהול כולל של הפרויקט\n✔ עבודה עם בעלי מקצוע מובילים\n✔ עמידה בזמנים ובתקציב\n✔ תוצאה איכותית ברמת גימור גבוהה",
+    fullDesc: "ניהול וביצוע פרויקט בנייה או שיפוץ דורש ניסיון, מקצועיות ושליטה מלאה בכל שלבי העבודה. אנו מציעים שירות כולל של ביצוע פרויקטים 'עד המפתח', משלב התכנון, דרך ניהול הקבלנים והעבודות ועד למסירה מלאה של נכס מוכן למגורים.\n✔ ניהול כולל של הפרויקט\n✔ עבודה עם בעלי מקצוע מובילים\n✔ עמידה בזמנים ובתקציב\n✔ תוצאה איכותית ברמת גימור גבוהה",
     mainImage: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=800",
   }
 ];
@@ -411,7 +411,6 @@ export default function App() {
                 className="flex flex-col items-start text-right"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="h-[2px] w-16 bg-accent"></div>
                   <span className="font-mono text-accent font-bold tracking-[0.3em] uppercase text-sm md:text-base">
                     השקט הנפשי שלכם, המומחיות שלנו.
                   </span>
@@ -512,7 +511,7 @@ export default function App() {
                     המשרד מנוהל על ידי אנשי מקצוע בעלי ניסיון רב בתחום הבנייה, בקרת איכות וניהול פרויקטים, עם התמחות בליקויי בנייה ונזקי מים.
                   </p>
                   <p>
-                    הגישה שלנו משלבת ידע הנדסי מעמיק עם ניסיון מעשי מהשטח — לספק פתרונות מדויקים, אמינים וישימים.
+                    הגישה שלנו משלבת ידע הנדסי מעמיק עם ניסיון מעשי מהשטח, לספק פתרונות מדויקים, אמינים וישימים.
                   </p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10">
@@ -779,7 +778,7 @@ export default function App() {
                 </button>
                 
                 <div className="p-8 md:p-12 overflow-y-auto">
-                  <div className="mb-10 border-b border-slate-100 pb-8">
+                  <div className="mb-10 pb-8">
                     <h3 className="text-4xl md:text-5xl font-black text-slate-950 tracking-tighter mb-4">{selectedProject.title}</h3>
                     <p className="text-slate-600 text-lg md:text-xl leading-relaxed max-w-2xl">{selectedProject.description}</p>
                   </div>
@@ -1020,7 +1019,6 @@ export default function App() {
                 >
                   <p className="text-md mb-6 text-slate-600 leading-relaxed italic">"{t.text}"</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-[2px] bg-slate-900"></div>
                     <div className="font-black text-slate-900 uppercase tracking-widest text-xs">{t.name}</div>
                   </div>
                 </motion.div>
@@ -1119,7 +1117,7 @@ export default function App() {
               ))}
             </nav>
           </div>
-          <div className="pt-12 border-t border-slate-800 text-center text-slate-500">
+          <div className="pt-12 text-center text-slate-500">
             <p>© {new Date().getFullYear()} OVER הנדסה. כל הזכויות שמורות.</p>
           </div>
         </div>
