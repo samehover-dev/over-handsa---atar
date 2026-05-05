@@ -153,22 +153,28 @@ export default function App() {
 
   useEffect(() => {
     // Scroll active category buttons into view whenever activeStages changes
-    // ONLY if no modal is open to prevent jumping
-    if (fullscreenImage || selectedProject) return;
+    // ONLY if no modal is open to prevent jumping. 
+    // We check both the state and the actual body style for extra safety.
+    if (fullscreenImage || selectedProject || document.body.style.overflow === 'hidden') return;
 
-    Object.entries(activeStages).forEach(([projectId, stageIdx]) => {
-      const container = document.querySelector(`#gallery-${projectId}`)?.closest('.space-y-6')?.querySelector('.overflow-x-auto');
-      const button = document.getElementById(`btn-${projectId}-${stageIdx}`);
-      
-      if (container && button) {
-        const btnContainer = container as HTMLElement;
-        const btnElement = button as HTMLElement;
+    // Small delay to ensure any layout shifts from opening/closing modals have settled
+    const timer = setTimeout(() => {
+      Object.entries(activeStages).forEach(([projectId, stageIdx]) => {
+        const container = document.querySelector(`#gallery-${projectId}`)?.closest('.space-y-6')?.querySelector('.overflow-x-auto');
+        const button = document.getElementById(`btn-${projectId}-${stageIdx}`);
         
-        // Calculate scroll position to center the button
-        const scrollPos = btnElement.offsetLeft - (btnContainer.offsetWidth / 2) + (btnElement.offsetWidth / 2);
-        btnContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
-      }
-    });
+        if (container && button) {
+          const btnContainer = container as HTMLElement;
+          const btnElement = button as HTMLElement;
+          
+          // Calculate scroll position to center the button
+          const scrollPos = btnElement.offsetLeft - (btnContainer.offsetWidth / 2) + (btnElement.offsetWidth / 2);
+          btnContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
+        }
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [activeStages, fullscreenImage, selectedProject]);
   const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
@@ -680,10 +686,11 @@ export default function App() {
                             ref={(el) => {
                               if (!el) return;
                               
-                              // Check if we already have an observer set up for this element to avoid re-creation on every render
                               if ((el as any)._observer) return;
 
                               const observer = new IntersectionObserver((entries) => {
+                                if (document.body.style.overflow === 'hidden') return;
+
                                 entries.forEach(entry => {
                                   if (entry.isIntersecting) {
                                     const category = parseInt(entry.target.getAttribute('data-category') || '0');
@@ -697,7 +704,7 @@ export default function App() {
                                 });
                               }, { 
                                 root: el, 
-                                rootMargin: '0px -45% 0px -45%', // Observe only the center 10%
+                                rootMargin: '0px -45% 0px -45%', 
                                 threshold: 0 
                               });
                               
