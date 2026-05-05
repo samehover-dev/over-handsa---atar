@@ -153,6 +153,9 @@ export default function App() {
 
   useEffect(() => {
     // Scroll active category buttons into view whenever activeStages changes
+    // ONLY if no modal is open to prevent jumping
+    if (fullscreenImage || selectedProject) return;
+
     Object.entries(activeStages).forEach(([projectId, stageIdx]) => {
       const container = document.querySelector(`#gallery-${projectId}`)?.closest('.space-y-6')?.querySelector('.overflow-x-auto');
       const button = document.getElementById(`btn-${projectId}-${stageIdx}`);
@@ -166,7 +169,7 @@ export default function App() {
         btnContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
       }
     });
-  }, [activeStages]);
+  }, [activeStages, fullscreenImage, selectedProject]);
   const [scrollableProjects, setScrollableProjects] = useState<Record<string, boolean>>({});
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonialName, setTestimonialName] = useState("");
@@ -677,12 +680,8 @@ export default function App() {
                             ref={(el) => {
                               if (!el) return;
                               
-                              // Use a weakMap or similar to avoid re-creating observers if not needed
-                              // or just disconnect existing one if we had a way to track it.
-                              // For simplicity in this structure, we'll mark the element.
-                              if ((el as any)._observer) {
-                                (el as any)._observer.disconnect();
-                              }
+                              // Check if we already have an observer set up for this element to avoid re-creation on every render
+                              if ((el as any)._observer) return;
 
                               const observer = new IntersectionObserver((entries) => {
                                 entries.forEach(entry => {
