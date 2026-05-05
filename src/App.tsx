@@ -151,11 +151,24 @@ export default function App() {
   const [fullscreenImage, setFullscreenImage] = useState<{url: string, index: number, allImages: string[]} | null>(null);
   const [activeStages, setActiveStages] = useState<Record<string, number>>({});
 
+  const scrollPositionRef = useRef(0);
+  const scrollLockRef = useRef(false);
+
+  // Helper to reliably scroll a child to center of its container using physical viewport positions, avoiding LTR/RTL manual math and native 'scrollIntoView' vertical jumping.
+  const scrollChildToCenter = (container: HTMLElement, child: HTMLElement) => {
+    const containerRect = container.getBoundingClientRect();
+    const childRect = child.getBoundingClientRect();
+    const offset = (childRect.left + childRect.width / 2) - (containerRect.left + containerRect.width / 2);
+    if (Math.abs(offset) > 1) {
+      container.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     // Scroll active category buttons into view whenever activeStages changes
     // ONLY if no modal is open to prevent jumping. 
     // We check both the state and the actual body style for extra safety.
-    if (fullscreenImage || selectedProject || document.body.style.overflow === 'hidden') return;
+    if (fullscreenImage || selectedProject || scrollLockRef.current) return;
 
     // Small delay to ensure any layout shifts from opening/closing modals have settled
     const timer = setTimeout(() => {
@@ -164,12 +177,7 @@ export default function App() {
         const button = document.getElementById(`btn-${projectId}-${stageIdx}`);
         
         if (container && button) {
-          const btnContainer = container as HTMLElement;
-          const btnElement = button as HTMLElement;
-          
-          // Calculate scroll position to center the button
-          const scrollPos = btnElement.offsetLeft - (btnContainer.offsetWidth / 2) + (btnElement.offsetWidth / 2);
-          btnContainer.scrollTo({ left: scrollPos, behavior: 'smooth' });
+          scrollChildToCenter(container as HTMLElement, button as HTMLElement);
         }
       });
     }, 100);
@@ -269,10 +277,21 @@ export default function App() {
   ];
 
   useEffect(() => {
-    if (isMenuOpen || selectedProject || !!fullscreenImage) {
+    const shouldLock = isMenuOpen || selectedProject !== null || fullscreenImage !== null;
+    
+    if (shouldLock && !scrollLockRef.current) {
+      scrollPositionRef.current = window.scrollY;
       document.body.style.overflow = 'hidden';
-    } else {
+      scrollLockRef.current = true;
+    } else if (!shouldLock && scrollLockRef.current) {
       document.body.style.overflow = '';
+      if (scrollPositionRef.current > 0) {
+        window.scrollTo({
+          top: scrollPositionRef.current,
+          behavior: 'instant' as ScrollBehavior
+        });
+      }
+      scrollLockRef.current = false;
     }
   }, [isMenuOpen, selectedProject, fullscreenImage]);
 
@@ -664,8 +683,8 @@ export default function App() {
                                     e.stopPropagation(); 
                                     const container = document.getElementById(`gallery-${project.id}`);
                                     const firstItem = container?.querySelector(`[data-category="${i}"]`);
-                                    if (firstItem) {
-                                      firstItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                                    if (container && firstItem) {
+                                      scrollChildToCenter(container as HTMLElement, firstItem as HTMLElement);
                                     }
                                     setActiveStages(prev => ({...prev, [project.id]: i}));
                                   }}
