@@ -434,7 +434,7 @@ export default function App() {
           {/* Background Image */}
           <img 
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000" 
-            alt="" 
+            alt="רקע בנייה הנדסית - OVER הנדסה" 
             className="absolute inset-0 w-full h-full object-cover z-0"
             referrerPolicy="no-referrer"
             aria-hidden="true"
@@ -515,7 +515,7 @@ export default function App() {
         <section className="py-12 md:py-32 relative overflow-hidden">
           <img 
             src="https://images.unsplash.com/photo-1581092160607-ee22521dd763?auto=format&fit=crop&q=80&w=2000" 
-            alt="" 
+            alt="תכנון הנדסי מקצועי רקע" 
             className="absolute inset-0 w-full h-full object-cover opacity-5"
             referrerPolicy="no-referrer"
             aria-hidden="true"
@@ -585,7 +585,7 @@ export default function App() {
           <div className="container mx-auto px-6 relative z-10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-12">
               <div className="max-w-3xl w-full text-center md:text-right">
-                <h3 className="text-5xl md:text-8xl font-black leading-[1.1]">המומחיות שלנו</h3>
+                <h2 className="text-5xl md:text-8xl font-black leading-[1.1]">המומחיות שלנו</h2>
               </div>
               <p className="text-2xl text-slate-400 max-w-md pr-8 py-2">
               </p>
@@ -625,7 +625,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="p-5 flex-grow flex flex-col">
-                    <h4 className="text-xl font-black mb-2 uppercase tracking-tighter leading-tight">{service.title}</h4>
+                    <h3 className="text-xl font-black mb-2 uppercase tracking-tighter leading-tight">{service.title}</h3>
                     <p className="text-slate-400 group-hover:text-slate-600 leading-snug text-sm flex-grow">{service.shortDesc}</p>
                     <div className="mt-4 flex items-center gap-1 text-accent font-bold uppercase tracking-wide text-xs">
                       <span>קרא עוד</span>
@@ -644,7 +644,7 @@ export default function App() {
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(#0f172a 1.5px, transparent 1.5px)', backgroundSize: '40px 40px' }}></div>
           
           <div className="container mx-auto px-4 md:px-6 max-w-5xl relative z-10">
-            <h3 className="text-4xl md:text-6xl font-black mb-16 text-center text-slate-950">הפרויקטים שלנו</h3>
+            <h2 className="text-4xl md:text-6xl font-black mb-16 text-center text-slate-950">הפרויקטים שלנו</h2>
             <div className="space-y-16">
               {projectsData.map((project, idx) => (
                 <motion.div 
@@ -658,14 +658,14 @@ export default function App() {
                 >
                   <div className="flex flex-col gap-6">
                     <div className="text-right">
-                      <h4 className="text-2xl md:text-5xl font-extrabold mt-3 mb-4 text-slate-950 tracking-tight">{project.title}</h4>
+                      <h3 className="text-2xl md:text-5xl font-extrabold mt-3 mb-4 text-slate-950 tracking-tight">{project.title}</h3>
                       <p className="text-slate-600 leading-relaxed text-base md:text-xl max-w-3xl">{project.description}</p>
                     </div>
                     
                     {project.stages && (
                       <div className="bg-slate-50 p-3 md:p-10 rounded-xl border border-slate-100">
                         <div className="flex justify-between items-center mb-6">
-                          <h5 className="text-lg font-bold text-slate-900">גלריית תמונות</h5>
+                          <h4 className="text-lg font-bold text-slate-900">גלריית תמונות</h4>
                           <div className="text-accent font-bold text-sm flex items-center gap-1">
                             <span>לחץ להגדלה</span>
                             <ChevronLeft size={14} />
@@ -961,7 +961,7 @@ export default function App() {
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
               <div className="technical-label">לקוחות ממליצים</div>
-              <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[1.1]">המלצות <br /><span className="text-accent">של לקוחות.</span></h3>
+              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[1.1]">המלצות <br /><span className="text-accent">של לקוחות.</span></h2>
               <button 
                 onClick={() => setShowTestimonialModal(true)}
                 className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-all"
@@ -1074,7 +1074,7 @@ export default function App() {
             <div className="max-w-6xl mx-auto bg-white/10 backdrop-blur-xl rounded-[2rem] border border-white/10 overflow-hidden flex flex-col lg:flex-row">
               {/* Contact Details */}
               <div className="lg:w-2/5 p-12 lg:p-16 lg:pl-12 text-white">
-                <h3 className="text-4xl font-black mb-12 tracking-tight">צור קשר</h3>
+                <h2 className="text-4xl font-black mb-12 tracking-tight">צור קשר</h2>
                 <div className="space-y-8 pl-8">
                   <div className="flex items-center justify-start gap-4 text-right">
                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-accent flex-shrink-0">
