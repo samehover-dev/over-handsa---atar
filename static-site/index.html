@@ -401,7 +401,10 @@ h1,h2,h3{text-wrap:balance}
   overflow:hidden;
 }
 .marquee-track{display:flex;width:max-content;animation:marquee 30s linear infinite}
-.marquee:hover .marquee-track{animation-play-state:paused}
+/* pause-on-hover only where a real mouse exists — touch taps make :hover stick and freeze the strip */
+@media (hover:hover) and (pointer:fine){
+  .marquee:hover .marquee-track{animation-play-state:paused}
+}
 .marquee-seq{display:flex;align-items:center;flex-shrink:0}
 .marquee-item{
   display:flex;align-items:center;gap:34px;padding-left:34px;
@@ -647,7 +650,13 @@ section[id],div[id]{scroll-margin-top:96px}
 .t-add:hover{background:var(--gold);border-color:var(--gold);color:#231a05;transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(154,117,36,.5)}
 .t-rail{position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
 .t-track{display:flex;width:max-content;padding:6px 0 14px;animation:tmarq 56s linear infinite}
-.t-rail:hover .t-track{animation-play-state:paused}
+@media (hover:hover) and (pointer:fine){
+  .t-rail:hover .t-track{animation-play-state:paused}
+}
+/* touch devices: never let a stuck :hover freeze the strips (offscreen pause still wins via !important) */
+@media (hover:none){
+  .marquee-track,.t-track{animation-play-state:running}
+}
 @keyframes tmarq{to{transform:translateX(50%)}}
 .t-seq{display:flex;gap:22px;padding-left:22px}
 .t-card{
