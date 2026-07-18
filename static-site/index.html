@@ -116,7 +116,7 @@
 }
 
 html{scroll-behavior:smooth;color-scheme:light;scrollbar-color:#cfc7b4 var(--bg)}
-html,body{overscroll-behavior-y:none}
+/* note: no overscroll-behavior on html/body — it kills pull-to-refresh on phones */
 body{
   font-family:var(--font-b);
   background:var(--bg);
@@ -400,7 +400,7 @@ h1,h2,h3{text-wrap:balance}
   border-top:1px solid var(--line-g);border-bottom:1px solid var(--line-g);
   overflow:hidden;
 }
-.marquee-track{display:flex;width:max-content;animation:marquee 30s linear infinite}
+.marquee-track{display:flex;width:max-content;animation:marquee 30s linear infinite;will-change:transform;transform:translateZ(0)}
 /* pause-on-hover only where a real mouse exists — touch taps make :hover stick and freeze the strip */
 @media (hover:hover) and (pointer:fine){
   .marquee:hover .marquee-track{animation-play-state:paused}
@@ -412,7 +412,7 @@ h1,h2,h3{text-wrap:balance}
   color:var(--gold-text);white-space:nowrap;
 }
 .marquee-item i{color:var(--ink);font-style:normal;font-size:.68em;opacity:.55}
-@keyframes marquee{to{transform:translateX(50%)}}
+@keyframes marquee{from{transform:translateZ(0) translateX(0)}to{transform:translateZ(0) translateX(50%)}}
 
 /* ---------- sections shared ---------- */
 .section{position:relative;padding:clamp(84px,10vw,140px) 0}
@@ -590,17 +590,19 @@ section[id],div[id]{scroll-margin-top:96px}
 .gal-top h4{font-weight:800;font-size:1.02rem;color:var(--ink)}
 .gal-hint{display:flex;align-items:center;gap:6px;color:var(--gold-text);font-weight:700;font-size:.85rem}
 .gal-hint svg{width:15px;height:15px}
-.gal-chips{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+/* horizontal scrollers use LTR mechanics + reversed order: visually identical RTL,
+   but immune to iOS Safari RTL scroll/snap bugs */
+.gal-chips{display:flex;direction:ltr;gap:10px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
 .gal-chips::-webkit-scrollbar{display:none}
 .chip{
-  flex-shrink:0;font-weight:700;font-size:.88rem;color:var(--stone);
+  flex-shrink:0;direction:rtl;font-weight:700;font-size:.88rem;color:var(--stone);
   border:1.5px solid rgba(24,29,39,.18);border-radius:99px;padding:9px 18px;background:#fff;
   min-height:44px;display:inline-flex;align-items:center;
   transition:color .3s,border-color .3s,background-color .3s,box-shadow .3s;white-space:nowrap;
 }
 .chip[aria-pressed="true"]{color:#231a05;background:linear-gradient(135deg,var(--gold-2),var(--gold));border-color:transparent;box-shadow:0 8px 20px -8px rgba(154,117,36,.55)}
 .gallery{
-  display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+  display:flex;direction:ltr;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
   padding:4px 2px 18px;scrollbar-width:thin;scrollbar-color:var(--gold) transparent;
 }
 .gallery::-webkit-scrollbar{height:6px}
@@ -608,7 +610,7 @@ section[id],div[id]{scroll-margin-top:96px}
 .gallery::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--gold-deep),var(--gold));border-radius:99px;border:0}
 .gallery::-webkit-scrollbar-track{background:rgba(24,29,39,.08);border-radius:99px}
 .g-item{
-  flex-shrink:0;width:min(72vw,258px);scroll-snap-align:center;
+  flex-shrink:0;width:min(72vw,258px);scroll-snap-align:center;direction:rtl;
   display:flex;flex-direction:column;gap:10px;text-align:center;
 }
 .g-media{
@@ -649,7 +651,7 @@ section[id],div[id]{scroll-margin-top:96px}
 }
 .t-add:hover{background:var(--gold);border-color:var(--gold);color:#231a05;transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(154,117,36,.5)}
 .t-rail{position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-.t-track{display:flex;width:max-content;padding:6px 0 14px;animation:tmarq 56s linear infinite}
+.t-track{display:flex;width:max-content;padding:6px 0 14px;animation:tmarq 56s linear infinite;will-change:transform;transform:translateZ(0)}
 @media (hover:hover) and (pointer:fine){
   .t-rail:hover .t-track{animation-play-state:paused}
 }
@@ -657,7 +659,32 @@ section[id],div[id]{scroll-margin-top:96px}
 @media (hover:none){
   .marquee-track,.t-track{animation-play-state:running}
 }
-@keyframes tmarq{to{transform:translateX(50%)}}
+/* ---------- touch parity: every desktop hover effect fires on press ---------- */
+@media (hover:none){
+  .svc-card:active{border-color:rgba(154,117,36,.5);box-shadow:0 44px 90px -46px rgba(24,29,39,.55)}
+  .svc-card:active .svc-media{transform:translateZ(22px)}
+  .svc-card:active .svc-media img{transform:scale(1.06)}
+  .svc-card:active .svc-ico{transform:translateZ(48px) rotate(-8deg)}
+  .svc-card:active .svc-body{transform:translateZ(14px)}
+  .svc-card:active .svc-title{color:var(--gold-deep)}
+  .svc-card:active .svc-shine::after{left:125%}
+  .svc-card:active .svc-more svg{transform:translateX(-6px)}
+  .g-item:active .g-media{transform:translateY(-4px);box-shadow:0 22px 44px -18px rgba(24,29,39,.4)}
+  .g-item:active .g-media img{transform:scale(1.06)}
+  .btn-gold:active{transform:translateY(-2px) scale(.99);box-shadow:0 26px 50px -14px rgba(154,117,36,.65)}
+  .btn-gold:active::after{left:125%}
+  .btn-ghost:active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .t-card:active{border-color:rgba(154,117,36,.5);transform:translateY(-5px);box-shadow:0 26px 54px -30px rgba(24,29,39,.45)}
+  .t-add:active{background:var(--gold);border-color:var(--gold);color:#231a05}
+  .feat:active .fi{background:var(--gold-deep);transform:rotate(-6deg)}
+  .feat:active{border-bottom-color:var(--gold)}
+  .chip:active{border-color:rgba(154,117,36,.5)}
+  .nav-cta:active,.mobile-cta:active{transform:translateY(-2px)}
+  .wa-float:active{transform:translateY(-3px) scale(1.05)}
+  .c-line:active .ci{background:rgba(198,156,61,.24);transform:rotate(-6deg)}
+  .footer-nav a:active,.nav-link:active,.mobile-link:active{color:var(--gold-deep)}
+}
+@keyframes tmarq{from{transform:translateZ(0) translateX(0)}to{transform:translateZ(0) translateX(50%)}}
 .t-seq{display:flex;gap:22px;padding-left:22px}
 .t-card{
   position:relative;width:min(84vw,392px);flex-shrink:0;
@@ -969,7 +996,7 @@ html.js .rl.in>span{transform:none}
       <a class="nav-link" href="#projects">הפרויקטים שלנו</a>
       <a class="nav-link" href="#testimonials">המלצות</a>
       <a class="nav-link" href="#contact">צור קשר</a>
-      <a class="nav-cta" href="tel:054-3324494" aria-label="חייג עכשיו למספר 054-3324494">
+      <a class="nav-cta" href="tel:+972543324494" aria-label="חייג עכשיו למספר 054-3324494">
         <svg width="18" height="18" aria-hidden="true"><use href="#i-phone"/></svg>
         חייג עכשיו
       </a>
@@ -993,7 +1020,7 @@ html.js .rl.in>span{transform:none}
       <a class="mobile-link" href="#testimonials" style="transition-delay:.32s">המלצות</a>
       <a class="mobile-link" href="#contact" style="transition-delay:.38s">צור קשר</a>
     </nav>
-    <a class="mobile-cta" href="tel:054-3324494" aria-label="חייג עכשיו למספר 054-3324494">
+    <a class="mobile-cta" href="tel:+972543324494" aria-label="חייג עכשיו למספר 054-3324494">
       <svg width="24" height="24" aria-hidden="true"><use href="#i-phone"/></svg>
       חייג עכשיו
     </a>
@@ -1021,7 +1048,7 @@ html.js .rl.in>span{transform:none}
         </div>
       </div>
       <div class="hero-actions" data-rv style="--d:.85s">
-        <a class="btn btn-gold" href="tel:054-3324494" data-magnet aria-label="חייג עכשיו למספר 054-3324494">
+        <a class="btn btn-gold" href="tel:+972543324494" data-magnet aria-label="חייג עכשיו למספר 054-3324494">
           <svg aria-hidden="true"><use href="#i-phone"/></svg>
           קבלו ייעוץ ראשוני ללא התחייבות
         </a>
@@ -1357,7 +1384,7 @@ html.js .rl.in>span{transform:none}
         <div class="c-lines">
           <div class="c-line">
             <span class="ci"><svg aria-hidden="true"><use href="#i-phone"/></svg></span>
-            <div><small>טלפון</small><a href="tel:054-3324494">054-3324494</a></div>
+            <div><small>טלפון</small><a href="tel:+972543324494">054-3324494</a></div>
           </div>
           <div class="c-line">
             <span class="ci"><svg aria-hidden="true"><use href="#i-mail"/></svg></span>
@@ -1437,7 +1464,7 @@ html.js .rl.in>span{transform:none}
       <span class="mi" id="svcModalIcon" aria-hidden="true"></span>
       <h3 id="svcModalTitle"></h3>
       <p id="svcModalText"></p>
-      <a class="btn btn-gold" href="tel:054-3324494" aria-label="חייג לייעוץ וקביעת פגישה: 054-3324494">
+      <a class="btn btn-gold" href="tel:+972543324494" aria-label="חייג לייעוץ וקביעת פגישה: 054-3324494">
         <svg aria-hidden="true"><use href="#i-phone"/></svg>
         לייעוץ וקביעת פגישה
       </a>
@@ -1816,7 +1843,7 @@ var heroScene=(function(){
   }
   edges.forEach(function(e){e.t0=(e.f+e.j*.8)/(NF+1)});
 
-  var PN=MOBILE?22:52,parts=[];
+  var PN=MOBILE?34:52,parts=[];
   for(var i=0;i<PN;i++)parts.push({
     x:(Math.random()*2-1)*420,y:Math.random()*520,z:(Math.random()*2-1)*300,
     v:6+Math.random()*13,ph:Math.random()*6.28,fr:.4+Math.random()*1.2,r:.7+Math.random()*1.5
@@ -1855,6 +1882,12 @@ var heroScene=(function(){
   if(FINE)window.addEventListener('pointermove',function(e){
     tMouseX=(e.clientX/window.innerWidth)*2-1;
     tMouseY=(e.clientY/window.innerHeight)*2-1;
+  },{passive:true});
+  /* touch devices: scroll drives the same parallax the mouse drives on desktop */
+  if(!FINE)window.addEventListener('scroll',function(){
+    var p=clamp(window.scrollY/Math.max(1,window.innerHeight),0,1);
+    tMouseX=(p*2-1)*.5;
+    tMouseY=p*.4-.2;
   },{passive:true});
 
   var F=640,D=1500;
@@ -2166,20 +2199,49 @@ $$('.gal-chips').forEach(function(wrap){
   });
 });
 var galSync={};
+/* chip sync driven by scroll position (IntersectionObserver with horizontal
+   rootMargin is unreliable on iOS Safari) */
+function galActiveSync(gal){
+  if(!galSync[gal.id])return;
+  var gr=gal.getBoundingClientRect(),cx=gr.left+gr.width/2,best=null,bd=1e9;
+  $$('.g-item',gal).forEach(function(it){
+    var r=it.getBoundingClientRect(),d=Math.abs(r.left+r.width/2-cx);
+    if(d<bd){bd=d;best=it}
+  });
+  if(!best)return;
+  var st=best.getAttribute('data-stage');
+  $$('.chip[data-gal="'+gal.id+'"]').forEach(function(c){
+    c.setAttribute('aria-pressed',c.getAttribute('data-stage')===st?'true':'false');
+  });
+}
 $$('.gallery').forEach(function(gal){
-  var galId=gal.id;
-  var io=new IntersectionObserver(function(es){
-    if(!galSync[galId])return;
-    es.forEach(function(en){
-      if(!en.isIntersecting)return;
-      var st=en.target.getAttribute('data-stage');
-      $$('.chip[data-gal="'+galId+'"]').forEach(function(c){
-        c.setAttribute('aria-pressed',c.getAttribute('data-stage')===st?'true':'false');
-      });
-    });
-  },{root:gal,rootMargin:'0px -45% 0px -45%',threshold:0});
-  $$('.g-item',gal).forEach(function(it){io.observe(it)});
+  var raf=null;
+  gal.addEventListener('scroll',function(){
+    if(!raf)raf=requestAnimationFrame(function(){raf=null;galActiveSync(gal)});
+  },{passive:true});
 });
+/* RTL-safe strips: LTR scroller + visual reversal via CSS order (DOM untouched,
+   so lightbox/keyboard order stay logical). Start at the visual right end where
+   item 1 sits; snap is lifted for a frame so it can't yank the position back. */
+function initGalleryPositions(){
+  $$('.gallery,.gal-chips').forEach(function(el){
+    if(!el._ordered){
+      el._ordered=true;
+      Array.prototype.forEach.call(el.children,function(k,i){k.style.order=String(-i)});
+    }
+    if(el._posInit)return;
+    if(el.scrollWidth<=el.clientWidth+10)return;
+    el._posInit=true;
+    var snap=el.style.scrollSnapType;
+    el.style.scrollSnapType='none';
+    el.scrollLeft=el.scrollWidth;
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      el.scrollLeft=el.scrollWidth;
+      el.style.scrollSnapType=snap||'';
+    })});
+  });
+}
+window.addEventListener('load',function(){setTimeout(initGalleryPositions,250)});
 function syncGalleryChips(){
   $$('.gallery').forEach(function(gal){
     var scrollable=gal.scrollWidth>gal.clientWidth+10;
@@ -2190,6 +2252,7 @@ function syncGalleryChips(){
       if(!scrollable)chips.forEach(function(c,i){c.setAttribute('aria-pressed',i===0?'true':'false')});
     }
   });
+  initGalleryPositions();
   measureDoc();
 }
 /* measure lazily so content-visibility isn't forced early */
@@ -2322,6 +2385,13 @@ if(contactForm)contactForm.addEventListener('submit',function(e){
   });
 });
 
+/* ---------- tel links: keep the tap a clean native navigation ---------- */
+/* stops document-level listeners (incl. 3rd-party a11y widget) from touching the
+   gesture — prevents mobile "site blocked from starting a call" interstitials */
+$$('a[href^="tel:"]').forEach(function(a){
+  a.addEventListener('click',function(e){e.stopPropagation()});
+});
+
 /* ---------- footer year ---------- */
 $('#fyear').textContent=new Date().getFullYear();
 
@@ -2362,6 +2432,27 @@ if(NOANIM){
     window.scrollTo(0,0);
   }
   startHero();
+  if(location.search.indexOf('gtest')>-1){
+    try{
+      var tg=$('#g2'),tg1=$('#g1');
+      tg.scrollIntoView();
+      void tg.scrollWidth; void tg1.scrollWidth; /* force render past content-visibility */
+      syncGalleryChips(); /* populate galSync + run init exactly like the visibility path */
+      setTimeout(function(){
+        var d=[
+          'g1sl='+Math.round(tg1.scrollLeft)+'/'+(tg1.scrollWidth-tg1.clientWidth),
+          'g2sc='+(galSync[tg.id]?1:0)
+        ];
+        if(galSync[tg.id]){
+          tg.scrollLeft=0; /* far left = last stage in row-reverse */
+          galActiveSync(tg);
+          var act=$('.chip[data-gal="g2"][aria-pressed="true"]');
+          d.push('act='+(act?act.getAttribute('data-stage'):'none'));
+        }
+        doc.title='GTEST '+d.join(' ');
+      },450);
+    }catch(e){doc.title='GTESTERR:'+e.message}
+  }
   if(location.search.indexOf('cdbg')>-1){
     try{
       var dc=$('#heroCanvas'),dctx=dc.getContext('2d');
