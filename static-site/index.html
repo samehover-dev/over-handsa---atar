@@ -2281,9 +2281,14 @@ function syncGalleryChips(){
   $$('.gallery').forEach(function(gal){
     var scrollable=gal.scrollWidth>gal.clientWidth+10;
     galSync[gal.id]=scrollable;
+    /* not scrollable -> anchor the row to the right edge (RTL look);
+       scrollable -> normal packing, initGalleryPositions opens at the right end */
+    gal.style.justifyContent=scrollable?'':'flex-end';
     var chips=$$('.chip[data-gal="'+gal.id+'"]');
     if(chips.length){
-      chips[0].parentElement.style.display=scrollable?'':'none';
+      var wrap=chips[0].parentElement;
+      wrap.style.display=scrollable?'':'none';
+      if(scrollable)wrap.style.justifyContent=(wrap.scrollWidth>wrap.clientWidth+10)?'':'flex-end';
       if(!scrollable)chips.forEach(function(c,i){c.setAttribute('aria-pressed',i===0?'true':'false')});
     }
   });
