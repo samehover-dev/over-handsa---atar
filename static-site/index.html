@@ -322,13 +322,7 @@ h1,h2,h3{text-wrap:balance}
     linear-gradient(270deg,rgba(246,242,233,.94) 20%,rgba(246,242,233,.75) 46%,rgba(246,242,233,.4) 70%,rgba(246,242,233,.22) 100%),
     rgba(210,176,106,.1);
 }
-@media (max-width:900px){
-  .hero-bg::after{
-    background:
-      linear-gradient(180deg,rgba(246,242,233,.94),rgba(246,242,233,.55) 24%,rgba(246,242,233,.42) 52%,rgba(240,233,218,.9) 92%),
-      rgba(246,242,233,.44);
-  }
-}
+/* the hero photo gets the exact same treatment on phones as on desktop */
 .hero-canvas{position:absolute;inset:0;z-index:-1;width:100%;height:100%}
 .hero-content{position:relative;max-width:920px}
 .hero-kicker{
@@ -937,11 +931,12 @@ html.js .rl.in>span{transform:none}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  .marquee-track,.t-track{animation:none!important;width:auto;flex-wrap:wrap}
-  .marquee-seq:nth-child(2),.t-seq-dup{display:none!important}
-  .t-rail{-webkit-mask-image:none;mask-image:none;overflow-x:auto}
   html.js [data-rv],html.js .rl>span{opacity:1;transform:none}
   .grain{animation:none}
+  /* brand motion stays alive even under OS reduce-motion (owner requirement):
+     the gentle strips keep their full animation */
+  .marquee-track{animation:marquee 30s linear infinite!important}
+  .t-track{animation:tmarq 56s linear infinite!important}
 }
 </style>
 </head>
@@ -1542,6 +1537,8 @@ root.classList.add('js');
 var NOANIM=location.search.indexOf('noanim')>-1;
 if(NOANIM)root.classList.add('noanim');
 var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches||NOANIM;
+/* iOS: :active styles only fire when a touchstart listener exists */
+doc.addEventListener('touchstart',function(){},{passive:true});
 var FINE=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 if(FINE)root.classList.add('has-cursor');
 
@@ -1872,7 +1869,7 @@ var heroScene=(function(){
     gGrad=ctx.createRadialGradient(gcx,gcy,1,gcx,gcy,Math.max(2,MOBILE?W*.7:W*.34));
     gGrad.addColorStop(0,'rgba(198,156,61,.14)');
     gGrad.addColorStop(1,'rgba(198,156,61,0)');
-    if(RM&&begun)draw(performance.now());
+    if(NOANIM&&begun)draw(performance.now());
   }
   resize(true);
   var rsT=null;
@@ -2002,7 +1999,7 @@ var heroScene=(function(){
     rafId=requestAnimationFrame(loop);
   }
   function setRunning(v){
-    if(RM)return;
+    if(NOANIM)return;
     if(v&&!running){running=true;rafId=requestAnimationFrame(loop)}
     else if(!v&&running){running=false;if(rafId)cancelAnimationFrame(rafId)}
   }
@@ -2020,7 +2017,7 @@ var heroScene=(function(){
   return {
     begin:function(){
       begun=true;
-      if(RM){
+      if(NOANIM){
         draw(performance.now());
         requestAnimationFrame(function(){resize(true);draw(performance.now())});
         return;
@@ -2073,6 +2070,35 @@ if(FINE&&!RM){
 
 /* ---------- services cards ---------- */
 var svcRows=$$('.svc-card');
+/* press-tilt on every touch device (iOS, Android, tablets, stylus):
+   the desktop 3D tilt, driven by the finger / pen */
+if(!FINE&&!NOANIM){
+  svcRows.forEach(function(el){
+    el.style.transition='transform .45s cubic-bezier(.16,1,.3,1),box-shadow .5s,border-color .5s';
+    function setTilt(x,y){
+      var r=el.getBoundingClientRect();
+      var px=(x-r.left)/r.width-.5,py=(y-r.top)/r.height-.5;
+      el.style.transform='perspective(900px) rotateX('+(-py*5).toFixed(2)+'deg) rotateY('+(px*6).toFixed(2)+'deg)';
+    }
+    function clearTilt(){el.style.transform=''}
+    if(window.PointerEvent){
+      el.addEventListener('pointerdown',function(e){
+        if(e.pointerType==='mouse')return;
+        setTilt(e.clientX,e.clientY);
+      },{passive:true});
+      ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+        el.addEventListener(ev,clearTilt,{passive:true});
+      });
+    }else{
+      el.addEventListener('touchstart',function(e){
+        if(e.touches[0])setTilt(e.touches[0].clientX,e.touches[0].clientY);
+      },{passive:true});
+      ['touchend','touchcancel'].forEach(function(ev){
+        el.addEventListener(ev,clearTilt,{passive:true});
+      });
+    }
+  });
+}
 
 /* ---------- generic modal helpers ---------- */
 var lastFocus=null;
@@ -2141,15 +2167,11 @@ svcRows.forEach(function(row,i){
 /* ---------- testimonials marquee + modal ---------- */
 var tTrack=$('#tTrack');
 if(tTrack){
-  if(!RM){
-    var seq=$('.t-seq',tTrack);
-    var dup=seq.cloneNode(true);
-    dup.setAttribute('aria-hidden','true');
-    dup.classList.add('t-seq-dup');
-    tTrack.appendChild(dup);
-  }else{
-    tTrack.style.animation='none';
-  }
+  var seq=$('.t-seq',tTrack);
+  var dup=seq.cloneNode(true);
+  dup.setAttribute('aria-hidden','true');
+  dup.classList.add('t-seq-dup');
+  tTrack.appendChild(dup);
 }
 var tModal=$('#tModal'),tAddBtn=$('#tAddBtn');
 if(tAddBtn)tAddBtn.addEventListener('click',function(){
@@ -2210,9 +2232,22 @@ function galActiveSync(gal){
   });
   if(!best)return;
   var st=best.getAttribute('data-stage');
+  if(gal._lastStage===st)return;
+  gal._lastStage=st;
+  var active=null;
   $$('.chip[data-gal="'+gal.id+'"]').forEach(function(c){
-    c.setAttribute('aria-pressed',c.getAttribute('data-stage')===st?'true':'false');
+    var on=c.getAttribute('data-stage')===st;
+    c.setAttribute('aria-pressed',on?'true':'false');
+    if(on)active=c;
   });
+  /* bring the active chip to the center of its own strip */
+  if(active){
+    var wrap=active.parentElement;
+    if(wrap.scrollWidth>wrap.clientWidth+10){
+      var wr=wrap.getBoundingClientRect(),cr=active.getBoundingClientRect();
+      wrap.scrollBy({left:(cr.left+cr.width/2)-(wr.left+wr.width/2),behavior:'smooth'});
+    }
+  }
 }
 $$('.gallery').forEach(function(gal){
   var raf=null;
