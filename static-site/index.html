@@ -2412,7 +2412,7 @@ doc.addEventListener('keydown',function(e){
     if(!horiz)return;
     if(ev&&ev.cancelable)ev.preventDefault();
     var m=media();if(!m)return;
-    var end=(dx<0&&lbIdx===lbItems.length-1)||(dx>0&&lbIdx===0);
+    var end=(dx>0&&lbIdx===lbItems.length-1)||(dx<0&&lbIdx===0);
     var eff=end?dx*0.28:dx; /* rubber-band at the ends */
     m.style.transform='translateX('+eff.toFixed(1)+'px)';
     m.style.opacity=String(Math.max(.45,1-Math.abs(eff)/700));
@@ -2423,8 +2423,8 @@ doc.addEventListener('keydown',function(e){
     var w=lightbox.clientWidth||window.innerWidth;
     var thr=Math.min(90,w*0.15);
     if(horiz&&Math.abs(dx)>thr){
-      /* content follows finger: drag left -> next(++), drag right -> prev(--) */
-      if(lbGo(dx<0?1:-1))return;
+      /* RTL feel: drag right -> next(++), drag left -> prev(--) */
+      if(lbGo(dx>0?1:-1))return;
     }
     if(m){m.style.transition='transform .3s cubic-bezier(.16,1,.3,1),opacity .3s';m.style.transform='';m.style.opacity=''}
   }
