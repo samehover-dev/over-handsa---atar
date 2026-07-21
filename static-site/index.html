@@ -2474,6 +2474,7 @@ if(contactForm)contactForm.addEventListener('submit',function(e){
     if(!r.ok)throw new Error('emailjs '+r.status);
     contactForm.reset();
     openModal(okModal);
+    gaConversion('_41fCIrCldQcEMnm8fdD');
   }).catch(function(){
     var wa='https://wa.me/972543324494?text='+encodeURIComponent('שלום, שמי '+name+'. הטלפון שלי הוא '+phone+'. הודעה: '+message);
     cfError.innerHTML='<span>שגיאה בשליחת ההודעה. אנא וודא שהגדרות ה-EmailJS תקינות במערכת.</span> <a href="'+wa+'" target="_blank" rel="noopener noreferrer">תיאום ייעוץ בוואטסאפ</a>';
@@ -2483,11 +2484,25 @@ if(contactForm)contactForm.addEventListener('submit',function(e){
   });
 });
 
+/* ---------- Google Ads conversion tracking ---------- */
+function gaConversion(label){
+  try{
+    if(typeof gtag==='function')gtag('event','conversion',{'send_to':'AW-18236601161/'+label,'value':1.0,'currency':'ILS'});
+  }catch(e){}
+}
+var GA_CONTACT_LABEL='0wKMCIfCldQcEMnm8fdD'; /* shared by phone + WhatsApp clicks */
+
 /* ---------- tel links: keep the tap a clean native navigation ---------- */
 /* stops document-level listeners (incl. 3rd-party a11y widget) from touching the
    gesture — prevents mobile "site blocked from starting a call" interstitials */
 $$('a[href^="tel:"]').forEach(function(a){
-  a.addEventListener('click',function(e){e.stopPropagation()});
+  a.addEventListener('click',function(e){e.stopPropagation();gaConversion(GA_CONTACT_LABEL)});
+});
+
+/* delegated so it also covers the WhatsApp fallback link injected into cfError */
+doc.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href*="wa.me"]');
+  if(a)gaConversion(GA_CONTACT_LABEL);
 });
 
 /* ---------- footer year ---------- */
